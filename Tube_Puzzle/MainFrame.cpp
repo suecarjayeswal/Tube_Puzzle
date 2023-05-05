@@ -25,13 +25,14 @@ MainFrame::MainFrame(const wxString& title)
 
 	// Create a panel to hold the main content
 	wxPanel* mainPanel = new wxPanel(this, wxID_ANY);
+	mainPanel->SetMinSize(wxSize(400, 400));
 
 	// Create a box sizer to layout the main panel
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
 	// Create a toolbar panel
 	wxPanel* toolbarPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 30));
-	toolbarPanel->SetBackgroundColour(wxColour(240, 240, 240));
+	toolbarPanel->SetBackgroundColour(wxColour(235, 235, 235));
 
 	// Create a box sizer to layout the toolbar panel
 	wxBoxSizer* toolbarSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -53,9 +54,16 @@ MainFrame::MainFrame(const wxString& title)
 
 	// Add the toolbar panel to the main sizer
 	mainSizer->Add(toolbarPanel, wxSizerFlags().Expand().Border(wxALL, 0));
-
+	
 	// Set the main sizer for the main panel
 	mainPanel->SetSizer(mainSizer);
+
+	// Add the main panel to the frame
+	wxBoxSizer* frameSizer = new wxBoxSizer(wxVERTICAL);
+	frameSizer->AddStretchSpacer();
+	frameSizer->Add(mainPanel, wxSizerFlags(1).Align(wxALIGN_CENTER));
+	frameSizer->AddStretchSpacer();
+	SetSizer(frameSizer);
 }
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
