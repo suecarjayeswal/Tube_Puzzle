@@ -1,31 +1,20 @@
-
 #pragma once
-
 #include <wx/wx.h>
 
-class MainFrame : public wxFrame
-{
+class MainFrame : public wxFrame {
 public:
-    MainFrame(const wxString& title);
+	MainFrame(const wxString& title);
+	void OnQuit(wxCommandEvent& event);
+	void OnAbout(wxCommandEvent& event);
 
 private:
-    void OnUndo(wxCommandEvent& event);
-
-    wxDECLARE_EVENT_TABLE();
+	wxDECLARE_EVENT_TABLE();
 };
 
-enum
-{
-    ID_UNDO = wxID_HIGHEST + 1
+enum {
+	ID_QUIT = wxID_EXIT,
+	ID_ABOUT = wxID_ABOUT
 };
 
-//#pragma once
-//#include <wx/wx.h>
-//
-//class mainframe: public wxframe
-//{
-//public:
-//	mainframe(const wxstring& title);
-//
-//};
+
 
