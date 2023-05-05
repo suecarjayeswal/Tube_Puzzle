@@ -1,5 +1,6 @@
 #include "MainFrame.h"
 #include <wx/wx.h>
+#include <wx/artprov.h>
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(ID_QUIT, MainFrame::OnQuit)
@@ -21,6 +22,40 @@ MainFrame::MainFrame(const wxString& title)
 
     CreateStatusBar();
     SetStatusText("Welcome to Tube Puzzle Game!");
+
+	// Create a panel to hold the main content
+	wxPanel* mainPanel = new wxPanel(this, wxID_ANY);
+
+	// Create a box sizer to layout the main panel
+	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+
+	// Create a toolbar panel
+	wxPanel* toolbarPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 30));
+	toolbarPanel->SetBackgroundColour(wxColour(240, 240, 240));
+
+	// Create a box sizer to layout the toolbar panel
+	wxBoxSizer* toolbarSizer = new wxBoxSizer(wxHORIZONTAL);
+
+	// Create an undo button
+	wxButton* undoButton = new wxButton(toolbarPanel, wxID_ANY, "Undo");
+	undoButton->SetBitmap(wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR));
+	undoButton->SetToolTip("Undo last action");
+
+
+	// Add a spacer to push the undo button to the right
+	toolbarSizer->AddStretchSpacer();
+
+	// Add the undo button to the toolbar
+	toolbarSizer->Add(undoButton, wxSizerFlags().Border(wxALL, 5).Align(wxALIGN_CENTER_VERTICAL));
+
+	// Add the toolbar sizer to the toolbar panel
+	toolbarPanel->SetSizer(toolbarSizer);
+
+	// Add the toolbar panel to the main sizer
+	mainSizer->Add(toolbarPanel, wxSizerFlags().Expand().Border(wxALL, 0));
+
+	// Set the main sizer for the main panel
+	mainPanel->SetSizer(mainSizer);
 }
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
