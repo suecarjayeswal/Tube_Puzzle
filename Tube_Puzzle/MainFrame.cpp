@@ -1,3 +1,4 @@
+#include "gameControl.h"
 #include "MainFrame.h"
 #include <wx/wx.h>
 #include <wx/artprov.h>
@@ -65,62 +66,32 @@ MainFrame::MainFrame(const wxString& title)
 	wxBoxSizer* playSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	playSizer->AddStretchSpacer(); // this strecher will help centre the columns horizontally
-	// Create a column panel 1
-	wxPanel* columnPanel1 = new wxPanel(playPanel, wxID_ANY, wxDefaultPosition, wxSize(30, 200), wxTAB_TRAVERSAL);
-	columnPanel1->SetBackgroundColour(wxColour(255, 255, 255));
-
-	// Create a column sizer 1
-	wxBoxSizer* columnSizer1 = new wxBoxSizer(wxVERTICAL);
-	columnSizer1->AddStretchSpacer();
-	for (int i = 0; i < 5; i++) {
-		wxPanel* bar = new wxPanel(columnPanel1, wxID_ANY, wxDefaultPosition, wxSize(25, 35));
-		bar->SetBackgroundColour(wxColour(0, 255, 0));
-		columnSizer1->Add(bar, wxSizerFlags().Border(wxALL, 2).Center());
-	}
-	columnSizer1->AddStretchSpacer();
-
-	// Add the column sizer 1 to the column panel 1
-	columnPanel1->SetSizer(columnSizer1);
-
-	// Add the column panel 1 to the play sizer
-	playSizer->Add(columnPanel1, wxSizerFlags().Center().Border(wxALL, 5));
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Create a column panel 2 and column sizer 2 (similar to column panel 1 and column sizer 1)
-	wxPanel* columnPanel2 = new wxPanel(playPanel, wxID_ANY, wxDefaultPosition, wxSize(30,200), wxTAB_TRAVERSAL);
-	columnPanel2->SetBackgroundColour(wxColour(255, 255, 255));
+	int values[] = { 1, 2, 3, 4, 5, 1, 2, 3, 4, 5 };
+	const int col = 2;
+	const int tub = 5;
+	TubeSet tubes(col, tub);
+	tubes.fillArray(values);
 	
-	wxBoxSizer* columnSizer2 = new wxBoxSizer(wxVERTICAL);
-	columnSizer2->AddStretchSpacer();
-	for (int i = 0; i < 5; i++) {
-		wxPanel* bar = new wxPanel(columnPanel2, wxID_ANY, wxDefaultPosition, wxSize(25, 35));
-		bar->SetBackgroundColour(wxColour(0, 255, 0));
-		columnSizer2->Add(bar, wxSizerFlags().Border(wxALL, 2).Center());
+
+	playSizer->AddStretchSpacer(); // this strecher will help centre the columns horizontally
+	wxPanel* columnPanel[col];
+	wxBoxSizer* columnSizer[col];
+
+	for (int Index = 0; Index < col ; Index++)
+	{
+		columnPanel[Index] = new wxPanel(playPanel, wxID_ANY, wxDefaultPosition, wxSize(30, 200), wxTAB_TRAVERSAL);
+		columnPanel[Index]->SetBackgroundColour(wxColour(255, 255, 255));
+		columnSizer[Index] = new wxBoxSizer(wxVERTICAL);
+		columnSizer[Index]->AddStretchSpacer();
+		for (int i = 0; i < tub; i++) {
+			wxPanel* bar = new wxPanel(columnPanel[Index], wxID_ANY, wxDefaultPosition, wxSize(25, 35));
+			bar->SetBackgroundColour(tubes.GetColor(tubes.get(Index,i)));
+			columnSizer[Index]->Add(bar, wxSizerFlags().Border(wxALL, 2).Center());
+		}
+		columnSizer[Index]->AddStretchSpacer();
+		columnPanel[Index]->SetSizer(columnSizer[Index]);
+		playSizer->Add(columnPanel[Index], wxSizerFlags().Center().Border(wxALL, 5));
 	}
-	columnSizer2->AddStretchSpacer();
-
-	// Add the column sizer 1 to the column panel 1
-	columnPanel2->SetSizer(columnSizer2);
-	// Add the column panel 1 to the play sizer
-	playSizer->Add(columnPanel2, wxSizerFlags().Center().Border(wxALL, 5));
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Create a column panel 3 and column sizer 3 (similar to column panel 1 and column sizer 1)
-	wxPanel* columnPanel3 = new wxPanel(playPanel, wxID_ANY, wxDefaultPosition, wxSize(30, 200), wxTAB_TRAVERSAL);
-	columnPanel3->SetBackgroundColour(wxColour(255, 255, 255));
-
-	wxBoxSizer* columnSizer3 = new wxBoxSizer(wxVERTICAL);
-	columnSizer3->AddStretchSpacer();
-	for (int i = 0; i < 5; i++) {
-		wxPanel* bar = new wxPanel(columnPanel3, wxID_ANY, wxDefaultPosition, wxSize(25, 35));
-		bar->SetBackgroundColour(wxColour(0, 255, 0));
-		columnSizer3->Add(bar, wxSizerFlags().Border(wxALL, 2).Center());
-	}
-	columnSizer3->AddStretchSpacer();
-
-	// Add the column sizer 1 to the column panel 1
-	columnPanel3->SetSizer(columnSizer3);
-	// Add the column panel 1 to the play sizer
-	playSizer->Add(columnPanel3, wxSizerFlags().Center().Border(wxALL, 5));
 	playSizer->AddStretchSpacer(); // this strecher will help centre the columns horizontally
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,6 +109,8 @@ MainFrame::MainFrame(const wxString& title)
 	frameSizer->Add(mainPanel, wxSizerFlags(1).Align(wxALIGN_CENTER));
 	frameSizer->AddStretchSpacer();
 	SetSizer(frameSizer);
+
+
 }
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
