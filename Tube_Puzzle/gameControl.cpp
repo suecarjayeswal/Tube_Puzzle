@@ -1,3 +1,4 @@
+//GameControl.cpp
 #include "gameControl.h"
 #include <iostream>
 
@@ -57,4 +58,10 @@ wxColor TubeSet::GetColor(int value) {
 		break;
 	}
 	return color;
+}
+int TubeSet::setValue(int column, int tube, int value)
+{
+	int originalValue = m_array[column][tube];
+	m_array[column][tube] = value;
+	return originalValue;
 }
