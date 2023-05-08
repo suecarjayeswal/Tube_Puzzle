@@ -1,4 +1,4 @@
-#include "gameControl.h"
+#include "TubeSet.h"
 #include "stack.h"
 #include "MainFrame.h"
 #include <iostream>
@@ -110,7 +110,7 @@ MainFrame::MainFrame(const wxString& title)
 		columnSizer[Index]->AddStretchSpacer();
 		for (int i = 0; i < tub; i++) {
 			wxPanel* bar = new wxPanel(columnPanel[Index], tube1+i+Index*100, wxDefaultPosition, wxSize(25, 35));
-			bar->SetBackgroundColour(tubes.GetColor(tubes.get(Index,i)));
+			bar->SetBackgroundColour(tubes.getWXColor(tubes.getColor(Index,i)));
 			columnSizer[Index]->Add(bar, wxSizerFlags().Border(wxALL, 2).Center());
 
 			bar->Bind(wxEVT_MOTION, &MainFrame::onColHover, this);
