@@ -1,29 +1,84 @@
 //TubeSet.cpp
 #include "TubeSet.h"
 #include <iostream>
-
+TubeSet::TubeSet()
+{
+	int num_columns = 3; int num_tubes = 3;
+	m_num_columns = (num_columns); 
+	m_num_tubes = (num_tubes);
+	m_array = new int** [m_num_columns];
+	for (int i = 0; i < m_num_columns; i++) {
+		m_array[i] = new int* [m_num_tubes];
+		for (int j = 0; j < m_num_tubes; j++) {
+			m_array[i][j] = new int[2];
+			m_array[i][j][0] = 0;
+			m_array[i][j][1] = 0;
+		}
+	}
+}
 TubeSet::TubeSet(int num_columns = 3, int num_tubes = 3)
 	: m_num_columns(num_columns), m_num_tubes(num_tubes)
 {
-	m_array = new int** [num_columns];
-	for (int i = 0; i < num_columns; i++) {
-		m_array[i] = new int* [num_tubes];
-		for (int j = 0; j < num_tubes; j++) {
+	m_array = new int** [m_num_columns];
+	for (int i = 0; i < m_num_columns; i++) {
+		m_array[i] = new int* [m_num_tubes];
+		for (int j = 0; j < m_num_tubes; j++) {
 			m_array[i][j] = new int[2];
 			m_array[i][j][0] = 0;
+			m_array[i][j][1] = 0;
 		}
 	}
 }
 
+TubeSet::TubeSet(const TubeSet* other)
+{
+	m_num_columns = other->m_num_columns;
+	m_num_tubes = other->m_num_tubes;
+	m_array = new int** [m_num_columns];
+	for (int i = 0; i < m_num_columns; i++) {
+		m_array[i] = new int* [m_num_tubes];
+		for (int j = 0; j < m_num_tubes; j++) {
+			m_array[i][j] = new int[2];
+			m_array[i][j][0] = other->getColor(i,j);
+			m_array[i][j][1] = other->getID(i,j);
+		}
+	}
+}
+//
+//TubeSet& TubeSet::operator=(const TubeSet* other) {
+//	if (this != other) { // Avoid self-assignment
+//		m_num_columns = other->m_num_columns;
+//		m_num_tubes = other->m_num_tubes;
+//		m_array = new int** [m_num_columns];
+//		for (int i = 0; i < m_num_columns; i++) {
+//			m_array[i] = new int* [m_num_tubes];
+//			for (int j = 0; j < m_num_tubes; j++) {
+//				m_array[i][j] = new int[2];
+//				m_array[i][j][0] = other->getColor(i, j);
+//				m_array[i][j][1] = other->getID(i, j);
+//			}
+//		}
+//	}
+//	return *this;
+//}
+
 TubeSet::~TubeSet()
 {
-	for (int i = 0; i < m_num_columns; i++) {
-		for (int j = 0; j < m_num_tubes; j++) {
-			delete[] m_array[i][j];
+	if (m_array != nullptr) {
+		for (int i = 0; i < m_num_columns; i++) {
+			if (m_array[i] != nullptr) {
+				
+				for (int j = 0; j < m_num_tubes; j++) {
+					if (m_array[i][j] != nullptr)
+					{
+						delete[] m_array[i][j];
+					}
+				}
+				delete[] m_array[i];
+			}
 		}
-		delete[] m_array[i];
+		delete[] m_array;
 	}
-	delete[] m_array;
 }
 
 void TubeSet::fillArray(int* values)
@@ -36,8 +91,11 @@ void TubeSet::fillArray(int* values)
 		}
 	}
 }
-int TubeSet::getColor(int column, int tube) {
-	return m_array[column][tube][0];
+int TubeSet::getColor(int col_n, int tube_n) const {
+	if ((col_n < 0 || col_n >= m_num_columns) || (tube_n < 0 || tube_n >= m_num_tubes)) {
+		return -1;;
+	}
+	return m_array[col_n][tube_n][0];
 }
 wxColor TubeSet::getWXColor(int value) {
 	wxColor color;
@@ -70,7 +128,7 @@ int TubeSet::setColor(int column, int tube, int value)
 	return originalValue;
 }
 
-int TubeSet::getID(int column, int tube)
+int TubeSet::getID(int column, int tube) const
 {
 	return m_array[column][tube][1];
 }
@@ -78,4 +136,25 @@ int TubeSet::getID(int column, int tube)
 void TubeSet::setID(int column, int tube, int value)
 {
 	m_array[column][tube][1] = value;
+}
+
+wxString TubeSet::traverseTubeSet()
+{
+	wxString str = wxString::Format(" ");
+	for (int i = 0;i < m_num_columns;i++) {
+		for (int Index = 0; Index <m_num_tubes; Index++)
+		{
+			char buffer[16];
+			sprintf_s(buffer, "%d", m_array[i][Index][0]);
+			if (str.length() > 1)
+				str.Append(" ");
+			str.Append(buffer);
+		}
+		char buffer[16];
+		sprintf_s(buffer, "\n");
+		if (str.length() > 1)
+			str.Append(" ");
+		str.Append(buffer);
+	}
+	return str;
 }

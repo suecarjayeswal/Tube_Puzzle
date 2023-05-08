@@ -1,4 +1,5 @@
-#include "TubeSet.h"
+
+#include "GameControl.h"
 #include "stack.h"
 #include "MainFrame.h"
 #include <iostream>
@@ -7,6 +8,7 @@
 using namespace std;
 
 enum colIDs {
+	playPanelID = 101,
 	col1 = 10001,
 	col2,
 	tube1 = 1001,
@@ -28,6 +30,13 @@ END_EVENT_TABLE()
 MainFrame::MainFrame(const wxString& title)
        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(400, 400))
 {
+	//game round initialization
+	int values[] = { 3,2,1,1,3,2,1,3,2,1,3,2,0,0,0,0,0,0,0,0 };
+	const int col = 5;
+	const int tub = 4;
+	round1 = new Game(col,tub,values);
+
+	//window layout from here
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(ID_ABOUT, "&About\tF1", "Show about dialog");
     menuFile->AppendSeparator();
@@ -49,7 +58,7 @@ MainFrame::MainFrame(const wxString& title)
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
 	// Create a toolbar panel
-	wxPanel* toolbarPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 30));
+	wxPanel* toolbarPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 60));
 	toolbarPanel->SetBackgroundColour(wxColour(235, 235, 235));
 
 	// Create a box sizer to layout the toolbar panel
@@ -59,6 +68,10 @@ MainFrame::MainFrame(const wxString& title)
 	wxButton* undoButton = new wxButton(toolbarPanel, wxID_ANY, "Undo");
 	undoButton->SetBitmap(wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR));
 	undoButton->SetToolTip("Undo last action");
+	// Create an redo button
+	wxButton* redoButton = new wxButton(toolbarPanel, wxID_ANY, "Redo");
+	redoButton->SetBitmap(wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR));
+	redoButton->SetToolTip("Redo previous action");
 	///////////////////////tmp Panel
 	int tmpID = wxID_ANY;
 	m_idLabel = new wxStaticText(toolbarPanel, tmpID, wxString::Format("ID: %d", tmpID), wxDefaultPosition, wxDefaultSize);
@@ -69,6 +82,8 @@ MainFrame::MainFrame(const wxString& title)
 
 	// Add the undo button to the toolbar
 	toolbarSizer->Add(undoButton, wxSizerFlags().Border(wxALL, 5).Align(wxALIGN_CENTER_VERTICAL));
+	// Add the redo button to the toolbar
+	toolbarSizer->Add(redoButton, wxSizerFlags().Border(wxALL, 5).Align(wxALIGN_CENTER_VERTICAL));
 
 	// Add the toolbar sizer to the toolbar panel
 	toolbarPanel->SetSizer(toolbarSizer);
@@ -80,47 +95,48 @@ MainFrame::MainFrame(const wxString& title)
 	mainPanel->SetSizer(mainSizer);
 
 	// Create a play panel
-	wxPanel* playPanel = new wxPanel(mainPanel, wxID_ANY,wxDefaultPosition,wxSize(398,368));
+	wxPanel* playPanel = new wxPanel(mainPanel, playPanelID,wxDefaultPosition,wxSize(398,368));
 	playPanel->SetBackgroundColour(wxColour(210, 210, 210));
 	// Create a sizer for the play panel
 	wxBoxSizer* playSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	int values[] = { 1, 2, 3, 4, 5, 1, 2, 3, 3, 2 };
-	const int col = 2;
-	const int tub = 5;
-	TubeSet tubes(col, tub);
-	tubes.fillArray(values);
+	/*TubeSet tubes(col, tub);
+	tubes.fillArray(values);*/
 	
 
 	playSizer->AddStretchSpacer(); // this strecher will help centre the columns horizontally
 	wxPanel* columnPanel[col];
 	wxBoxSizer* columnSizer[col];
-	cout << "Hello There" << endl;
-	colTubStack = new Stack * [col];
-	//initialization of Stack for each column
 	
+	/*colTubStack = new Stack * [col];*/
+	//initialization of Stack for each column
+	int tmpColor_n = 0;
 	for (int Index = 0; Index < col ; Index++)
 	{
-		colTubStack[Index] = new Stack(col);
+		/*colTubStack[Index] = new Stack(col);*/
 
 		columnPanel[Index] = new wxPanel(playPanel, col1+Index, wxDefaultPosition, wxSize(30, 200), wxTAB_TRAVERSAL);
 		columnPanel[Index]->SetBackgroundColour(wxColour(255, 255, 255));
 		columnSizer[Index] = new wxBoxSizer(wxVERTICAL);
 		columnSizer[Index]->AddStretchSpacer();
 		for (int i = 0; i < tub; i++) {
-			wxPanel* bar = new wxPanel(columnPanel[Index], tube1+i+Index*100, wxDefaultPosition, wxSize(25, 35));
-			bar->SetBackgroundColour(tubes.getWXColor(tubes.getColor(Index,i)));
+			int tmpBarID = tube1 + i + Index * 100;
+
+			wxPanel* bar = new wxPanel(columnPanel[Index], tmpBarID, wxDefaultPosition, wxSize(25, 35));
+			
+			tmpColor_n = round1->getColor(Index, i);
+			bar->SetBackgroundColour(round1->getWXColor(tmpColor_n));
 			columnSizer[Index]->Add(bar, wxSizerFlags().Border(wxALL, 2).Center());
 
 			bar->Bind(wxEVT_MOTION, &MainFrame::onColHover, this);
 			bar->Bind(wxEVT_LEFT_DOWN, &MainFrame::onColClick, this);
 
 			//pushing tube IDs into column's Stack
-			colTubStack[Index]->push(tube1 + i + Index * 100);
+			if(tmpColor_n!=0)	round1->pushIDinStack(Index, tmpBarID);
 		}
 		//reversing the Column's Stack 
-		colTubStack[Index]->reverse();
+		round1->reverseStack(Index);
 
 		columnSizer[Index]->AddStretchSpacer();
 		columnPanel[Index]->SetSizer(columnSizer[Index]);
@@ -135,6 +151,9 @@ MainFrame::MainFrame(const wxString& title)
 
 	// Set the play sizer for the play panel
 	playPanel->SetSizer(playSizer);
+	// Bind PlayPanel to outClick
+	playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
+
 	// Add the play panel to the main sizer, centering it within the main panel
 	mainSizer->AddStretchSpacer();
 	mainSizer->Add(playPanel, wxSizerFlags().Center().Border(wxALL, 5).Proportion(1));
@@ -150,6 +169,11 @@ MainFrame::MainFrame(const wxString& title)
 
 }
 
+MainFrame::~MainFrame()
+{
+	delete round1;
+}
+
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     Close(true);
@@ -162,26 +186,33 @@ void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::onColHover(wxMouseEvent& event)
 {
-	
-	wxLogStatus(wxString::Format("col no: %d", getTubColID(event.GetId())));
+	int tubId = event.GetId();
+	int tub_n = getTubID(tubId);
+	int col_n = getTubColID(tubId);
+	int tubColor = round1->getColor(col_n, tub_n);
+	wxLogStatus(wxString::Format("col no: %d %d", col_n,tubColor));
 }
 
 void MainFrame::onColClick(wxMouseEvent& event)
 {
-	cout << "\n Hi There Id:" << event.GetId();
-	int  tmp = getTubColID(event.GetId());
-	int tmpColId = colTubStack[tmp]->top();
-	wxString str = wxString::Format("col no is:%d %d %d",event.GetId(), tmp,tmpColId);
-	m_idLabel->SetLabelText(str);
+	int tubId = event.GetId();
 
+	int tub_n = getTubID(tubId);
+	int col_n = getTubColID(tubId);
+	int tmpColno = round1->getTmpCol();
 
-	/*m_idLabel->SetLabelText(wxString::Format("%s", colTubStack[tmp]->traverse()));*/
-	tmpColId = colTubStack[tmp]->top();
-	wxPanel* clickedPanel = wxDynamicCast(FindWindow(tmpColId), wxPanel); // get a pointer to the clicked panel
-	if (clickedPanel) {
-		clickedPanel->SetBackgroundColour(wxColour(255,255,255)); // set the background color of the clicked panel to red
-		clickedPanel->Refresh(); // refresh the panel to show the new background color
-	}
+	highlightSelectedCol(col_n);
+	round1->setTmpColNo(col_n);
+	round1->swapByClick(tmpColno,col_n);
+	updateTubeColors();
+
+	displayInfoOnPanel(tubId);
+}
+
+void MainFrame::onOutClick(wxMouseEvent& event)
+{
+	highlightSelectedCol(-1);
+	round1->resetTmpDetails();
 }
 
 int MainFrame::getTubColID(int tmp)
@@ -193,6 +224,71 @@ int MainFrame::getTubColID(int tmp)
 		tmp = (tmp - 1000) / 100;
 	}
 	return tmp;
+}
+
+int MainFrame::getTubID(int tmp)
+{
+	if (tmp >= 10000) {
+		tmp =(round1->getColStackTop(getTubColID(tmp)))%100 - 1;
+		
+	}
+	else {
+		tmp = tmp % 100 - 1;
+	}
+	return tmp;
+}
+void MainFrame::updateTubeColors() {
+	for (int colIndex = 0; colIndex < round1->getNumCols(); colIndex++) {
+		// make stack empty to refilling
+		round1->makeColStackEmpty(colIndex);
+		for (int tubeIndex = 0; tubeIndex < round1->getNumTubes(); tubeIndex++) {
+			int tmpBarID = tube1 + tubeIndex + colIndex * 100;
+			wxPanel* bar = wxDynamicCast(FindWindow(tmpBarID), wxPanel);
+			if (bar) {
+				int color = round1->getColor(colIndex, tubeIndex);
+				bar->SetBackgroundColour(round1->getWXColor(color));
+				wxLogStatus("%d",color);
+				//pushing tube IDs into column's Stack
+				if (color != 0)	round1->pushIDinStack(colIndex, tmpBarID);
+				bar->Refresh();
+			}
+		}
+		round1->reverseStack(colIndex);
+	}
+}
+
+void MainFrame::highlightSelectedCol(int col_n)
+{
+	for (int Index = 0; Index < round1->getNumCols() ; Index++)
+	{
+		
+		wxPanel* selectedPanel = wxDynamicCast(FindWindow(col1 + Index), wxPanel);
+		selectedPanel->SetBackgroundColour(wxColour(255,255,255));
+		if (Index == col_n) selectedPanel->SetBackgroundColour(wxColour(200, 200, 200));;
+		selectedPanel->Refresh();
+	}
+}
+
+void MainFrame::displayInfoOnPanel(int tubeID)
+{
+	int tubId = tubeID;
+	int tub_n = getTubID(tubId);
+	int col_n = getTubColID(tubId);
+	int tubColor = round1->getColor(col_n, tub_n);
+	int ColTop_n = getTubID(round1->getColStackTop(col_n));
+	int TopTubColor = round1->getColor(col_n, ColTop_n);
+	wxString str1 = wxString::Format("Clicked:%d(%d)(%d)-Col%d TOP%d(%d) ", tubId, tub_n, tubColor, col_n, ColTop_n, TopTubColor);
+	wxString str2 = wxString::Format(" Count:%d", round1->getColStackCount(col_n)).Append(" ").Append(round1->traverseColStack(col_n));
+
+	int tmpColno = round1->getTmpCol();
+	wxString str3 = wxString::Format(" tmp%d", tmpColno);
+
+
+
+	str3.Append(wxString::Format(" %d", round1->getTmpCol()));
+	str3.Append(wxString::Format(" \n")).Append(round1->traverseTubeSet());
+	wxString str = str1.Append("\n").Append(str2).Append(" ").Append(str3);;
+	m_idLabel->SetLabelText(str);
 }
 
 

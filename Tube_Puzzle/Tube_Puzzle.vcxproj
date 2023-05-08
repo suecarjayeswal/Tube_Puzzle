@@ -19,15 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActionStack.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="GameControl.h" />
+    <ClInclude Include="Queue.h" />
     <ClInclude Include="TubeSet.h" />
     <ClInclude Include="MainFrame.h" />
     <ClInclude Include="stack.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActionStack.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="GameControl.cpp" />
+    <ClCompile Include="Queue.cpp" />
     <ClCompile Include="TubeSet.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="stack.cpp" />

@@ -1,5 +1,8 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS 1 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS 1 
 #include <iostream>
+#include <wx/wx.h>
 class Stack {
 public:
 	Stack(int limit); // Constructor
@@ -11,7 +14,8 @@ public:
 	int top() const; // Get value of top element without removing it
 	int count() const; // Get count of elements
 	void reverse(); // Reverse the elements in the stack
-	//std::string traverse() const; // Traverse the stack and return a string of all elements
+	void makeEmpty(); // Make stack empty
+	wxString traverse() const; // Traverse the stack and return a string of all elements
 private:
 	int MAX_LIMIT;// Maximum limit of elements
 	int TOP; // Index of the top element in the stack

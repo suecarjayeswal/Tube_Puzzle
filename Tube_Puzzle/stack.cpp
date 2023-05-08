@@ -2,14 +2,15 @@
 
 #include "Stack.h"
 #include <iostream>
+#include <wx/wx.h>
 Stack::Stack(int limit) {
 	TOP = -1;
 	MAX_LIMIT = limit;
-	elements = new int(MAX_LIMIT);
+	elements = new int[MAX_LIMIT];
 }
 
 Stack::~Stack() {
-	delete[] elements;
+	delete elements;
 }
 
 bool Stack::isEmpty() const {
@@ -60,8 +61,30 @@ void Stack::reverse() {
 		pop();
 		arr[i++] = element;
 	}
-	while (j < i) {
+	
+	while (j <i) {
 		int element = arr[j++];
 		push(element);
 	}
 }
+
+void Stack::makeEmpty()
+{
+	while (!isEmpty()) {
+		pop();
+	}
+}
+wxString Stack::traverse() const
+{
+	wxString str = wxString::Format(" ");
+	for (int Index = TOP; Index >= 0; Index--)
+	{
+		char buffer[16];
+		sprintf_s(buffer, "%d", elements[Index]);
+		if (str.length() > 1)
+			str.Append(" ");
+		str.Append(buffer);
+	}
+	return str;
+}
+
