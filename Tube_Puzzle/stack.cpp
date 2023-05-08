@@ -2,81 +2,58 @@
 
 #include "Stack.h"
 #include <iostream>
-// Constructor
-Stack::Stack()
-{
-	head = nullptr;
+Stack::Stack(int limit) {
+	TOP = -1;
+	MAX_LIMIT = limit;
+	elements = new int(MAX_LIMIT);
 }
 
-// Destructor
-Stack::~Stack()
-{
-	while (!isEmpty())
-	{
-		pop();
-	}
+Stack::~Stack() {
+	delete[] elements;
 }
 
-// Push an element onto the stack
-void Stack::push(int data)
-{
-	Node* newNode = new Node;
-	newNode->data = data;
-	newNode->next = head;
-	head = newNode;
+bool Stack::isEmpty() const {
+	return TOP == -1;
 }
 
-// Pop an element off the stack
-void Stack::pop()
-{
-	if (isEmpty())
-	{
-		std::cout << "Error: Stack is empty!\n";
+bool Stack::isFull() const {
+	return TOP == MAX_LIMIT - 1;
+}
+
+void Stack::push(int data) {
+	if (isFull()) {
+		std::cerr << "Error: Stack is full\n";
 		return;
 	}
-
-	Node* temp = head;
-	head = head->next;
-	delete temp;
+	TOP++;
+	elements[TOP] = data;
 }
 
-// Return the top element of the stack
-int Stack::top() const
-{
-	if (isEmpty())
-	{
-		std::cout << "Error: Stack is empty!\n";
+int Stack::pop() {
+	if (isEmpty()) {
+		std::cerr << "Error: Stack is empty\n";
 		return -1;
 	}
-
-	return head->data;
+	int data = elements[TOP];
+	TOP--;
+	return data;
 }
 
-// Check if the stack is empty
-bool Stack::isEmpty() const
-{
-	return head == nullptr;
-}
-
-//Traverse and print all elements in the stack
-void Stack::traverse() const
-{
-	if (isEmpty())
-	{
-		std::cout << "Error: Stack is empty!\n";
-		return;
+int Stack::top() const {
+	if (isEmpty()) {
+		std::cerr << "Error: Stack is empty\n";
+		return -1;
 	}
-
-	Node* current = head;
-	while (current != nullptr)
-	{
-		std::cout << current->data << " ";
-		current = current->next;
-	}
-	std::cout << "\n";
+	return elements[TOP];
 }
-void Stack::reverseStack() {
-	int arr[20];
+
+int Stack::count() const
+{
+	return TOP;
+}
+
+void Stack::reverse() {
+	int arr[20]{};
 	int j = 0, i = 0;
 	while (!isEmpty()) {
 		int element = top();
@@ -87,22 +64,4 @@ void Stack::reverseStack() {
 		int element = arr[j++];
 		push(element);
 	}
-
 }
-//std::string Stack::traverse() {
-//	std::string msg;
-//	if (isEmpty())
-//	{
-//		msg= "Error: Stack is empty!\n";
-//		return msg;
-//	}
-//
-//	Node* current = head;
-//	while (current != nullptr)
-//	{
-//		msg = current->data + " ";
-//		current = current->next;
-//	}
-//	msg+= "\n";
-//	return msg;
-//}

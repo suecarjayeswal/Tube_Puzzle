@@ -1,26 +1,19 @@
 #pragma once
-// Stack.h - Header file for stack class
 #include <iostream>
-class Stack
-{
+class Stack {
 public:
-	Stack();            // Constructor
-	~Stack();           // Destructor
-	void push(int data);    // Push an element onto the stack
-	void pop();         // Pop an element off the stack
-	int top() const;    // Return the top element of the stack
-	bool isEmpty() const;   // Check if the stack is empty
-	void traverse() const;  // Traverse and print all elements in the stack
-	void reverseStack();
-	//std::string traverse();
+	Stack(int limit); // Constructor
+	~Stack(); // Destructor
+	bool isEmpty() const; // Check if stack is empty
+	bool isFull() const; // Check if stack is full
+	void push(int data); // Push element to top of stack
+	int pop(); // Remove and return element from top of stack
+	int top() const; // Get value of top element without removing it
+	int count() const; // Get count of elements
+	void reverse(); // Reverse the elements in the stack
+	//std::string traverse() const; // Traverse the stack and return a string of all elements
 private:
-	struct Node
-	{
-		int data;
-		Node* next;
-	};
-
-	Node* head;         // Pointer to the top of the stack
+	int MAX_LIMIT;// Maximum limit of elements
+	int TOP; // Index of the top element in the stack
+	int* elements; // Array of elements in the stack
 };
-
-

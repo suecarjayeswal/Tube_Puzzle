@@ -102,7 +102,7 @@ MainFrame::MainFrame(const wxString& title)
 	
 	for (int Index = 0; Index < col ; Index++)
 	{
-		colTubStack[Index] = new Stack();
+		colTubStack[Index] = new Stack(col);
 
 		columnPanel[Index] = new wxPanel(playPanel, col1+Index, wxDefaultPosition, wxSize(30, 200), wxTAB_TRAVERSAL);
 		columnPanel[Index]->SetBackgroundColour(wxColour(255, 255, 255));
@@ -120,7 +120,7 @@ MainFrame::MainFrame(const wxString& title)
 			colTubStack[Index]->push(tube1 + i + Index * 100);
 		}
 		//reversing the Column's Stack 
-		colTubStack[Index]->reverseStack();
+		colTubStack[Index]->reverse();
 
 		columnSizer[Index]->AddStretchSpacer();
 		columnPanel[Index]->SetSizer(columnSizer[Index]);
