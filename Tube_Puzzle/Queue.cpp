@@ -22,7 +22,10 @@ int Queue::size() const {
 }
 
 void Queue::enqueue(TubeSet* data) {
+	wxLogDebug("  Inside enqueue ");
+	wxLogDebug("%s",data->traverseTubeSet());
 	Node* newNode = new Node(data);
+	//wxLogDebug("%s", newNode->data->traverseTubeSet());
 	if (isEmpty()) {
 		front = newNode;
 	}
@@ -43,16 +46,25 @@ void Queue::dequeue() {
 	count--;
 }
 
-TubeSet Queue::peekFront() const {
+void Queue::makeEmpty() {
+	while (!isEmpty()) {
+		dequeue();
+	}
+}
+
+
+TubeSet* Queue::peekFront() const {
 	if (isEmpty()) {
-		return TubeSet();
+		TubeSet* p = new TubeSet;
+		return p;
 	}
 	return front->data;
 }
 
-TubeSet Queue::peekRear() const {
+TubeSet* Queue::peekRear() const {
 	if (isEmpty()) {
-		return TubeSet();
+		TubeSet* p = new TubeSet;
+		return p;
 	}
 	return rear->data;
 }

@@ -3,19 +3,20 @@
 
 class Node {
 public:
-	TubeSet data;
+	TubeSet* data;
 	Node* next;
 
 	Node(TubeSet d) {
-		data = d;
+		data = new TubeSet(d);
 		next = nullptr;
 	}
 	Node(TubeSet* d) {
-		data = TubeSet(d);
+		data = (d);
 		next = nullptr;
 	}
 	~Node() {
 		delete next;
+		delete data;
 	}
 };
 
@@ -33,8 +34,9 @@ public:
 	int size() const;
 	void enqueue(TubeSet* data);
 	void dequeue();
-	TubeSet peekFront() const;
-	TubeSet peekRear() const;
+	void makeEmpty();
+	TubeSet* peekFront() const;
+	TubeSet* peekRear() const;
 };
 
 

@@ -5,7 +5,7 @@ class TubeSet {
 public:
 	TubeSet();
 	TubeSet(int num_columns, int num_tubes);
-	TubeSet(const TubeSet* other);
+	TubeSet( TubeSet* other);
 	TubeSet& operator=(const TubeSet* other);
 	~TubeSet();
 

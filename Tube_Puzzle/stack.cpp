@@ -3,10 +3,25 @@
 #include "Stack.h"
 #include <iostream>
 #include <wx/wx.h>
+Stack::Stack() {
+	TOP = -1;
+	MAX_LIMIT = 0;
+	elements = new int[MAX_LIMIT];
+}
 Stack::Stack(int limit) {
 	TOP = -1;
 	MAX_LIMIT = limit;
 	elements = new int[MAX_LIMIT];
+}
+
+Stack::Stack(Stack* data)
+{
+	TOP = data->TOP;
+	MAX_LIMIT = data->MAX_LIMIT;
+	elements = new int[MAX_LIMIT];
+	for (int i = 0; i < MAX_LIMIT; i++) {
+		elements[i] = data->elements[i];
+	}
 }
 
 Stack::~Stack() {

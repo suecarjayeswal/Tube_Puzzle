@@ -15,18 +15,19 @@ Game::Game(int no_col, int no_tube, int* values) :no_col(no_col), no_tube(no_tub
 	resetTmpDetails();
 
 	//initializing actions Queue
-	actionQueue = new Queue();
+	actions = new ActionStack();
+	redoActions = new Queue();
 }
 
 Game::~Game()
 {
-	delete tubes;
 	for (int Index = 0; Index < no_col; Index++)
 	{
 		delete colTubStack[Index];
 	}
 	delete[] colTubStack;
-	delete actionQueue;
+	delete actions;
+	delete redoActions;
 }
 
 void Game::resetTmpDetails() {
@@ -128,9 +129,15 @@ void Game::swapByClick(int col_n1, int col_n2)
 			tmp_tube_details[0] = -1;
 
 			//register the action 
-			//actionQueue->enqueue(tubes);
+			wxLogDebug("Action Deemed to Register");
+			actions->push(tubes,colTubStack,no_col);
+			redoActions->makeEmpty();
 		}
 	}
+}
+void Game::revertAction()
+{
+
 }
 int Game::getNumCols() const {
 	return no_col;

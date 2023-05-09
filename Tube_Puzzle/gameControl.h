@@ -1,6 +1,7 @@
 #pragma once
 #include "TubeSet.h"
 #include "stack.h"
+#include "ActionStack.h"
 #include "Queue.h"
 #include <wx/wx.h>
 class Game
@@ -11,7 +12,8 @@ private:
 	int no_tube;
 	int tmp_tube_details[3];
 	Stack** colTubStack;
-	Queue* actionQueue;
+	ActionStack* actions;
+	Queue* redoActions;;
 public:
 	Game(int no_col, int no_tube, int* values);
 	~Game();
@@ -37,6 +39,6 @@ public:
 	bool isColFull(int col_n);
 	void swapByClick(int col_n1, int col_n2);
 
-
+	void revertAction();
 };
 

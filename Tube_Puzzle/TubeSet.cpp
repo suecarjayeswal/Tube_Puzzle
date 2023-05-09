@@ -1,11 +1,18 @@
 //TubeSet.cpp
 #include "TubeSet.h"
 #include <iostream>
+//TubeSet::TubeSet()
+//{
+//	
+//	m_num_columns = (0); 
+//	m_num_tubes = (0);
+//	m_array = nullptr;
+//
+//}
 TubeSet::TubeSet()
 {
-	int num_columns = 3; int num_tubes = 3;
-	m_num_columns = (num_columns); 
-	m_num_tubes = (num_tubes);
+	m_num_columns = 3;
+	m_num_tubes = 3;
 	m_array = new int** [m_num_columns];
 	for (int i = 0; i < m_num_columns; i++) {
 		m_array[i] = new int* [m_num_tubes];
@@ -30,7 +37,7 @@ TubeSet::TubeSet(int num_columns = 3, int num_tubes = 3)
 	}
 }
 
-TubeSet::TubeSet(const TubeSet* other)
+TubeSet::TubeSet( TubeSet* other)
 {
 	m_num_columns = other->m_num_columns;
 	m_num_tubes = other->m_num_tubes;
@@ -39,8 +46,8 @@ TubeSet::TubeSet(const TubeSet* other)
 		m_array[i] = new int* [m_num_tubes];
 		for (int j = 0; j < m_num_tubes; j++) {
 			m_array[i][j] = new int[2];
-			m_array[i][j][0] = other->getColor(i,j);
-			m_array[i][j][1] = other->getID(i,j);
+			m_array[i][j][0] = other->getColor(i, j);
+			m_array[i][j][1] = other->getID(i, j);
 		}
 	}
 }
@@ -64,6 +71,8 @@ TubeSet::TubeSet(const TubeSet* other)
 
 TubeSet::~TubeSet()
 {
+	wxLogDebug("inside tubeset Destructor");
+	wxLogDebug("%p %p",this,m_array);
 	if (m_array != nullptr) {
 		for (int i = 0; i < m_num_columns; i++) {
 			if (m_array[i] != nullptr) {
@@ -142,7 +151,7 @@ wxString TubeSet::traverseTubeSet()
 {
 	wxString str = wxString::Format(" ");
 	for (int i = 0;i < m_num_columns;i++) {
-		for (int Index = 0; Index <m_num_tubes; Index++)
+		for (int Index = 0; Index < m_num_tubes; Index++)
 		{
 			char buffer[16];
 			sprintf_s(buffer, "%d", m_array[i][Index][0]);

@@ -68,10 +68,12 @@ MainFrame::MainFrame(const wxString& title)
 	wxButton* undoButton = new wxButton(toolbarPanel, wxID_ANY, "Undo");
 	undoButton->SetBitmap(wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR));
 	undoButton->SetToolTip("Undo last action");
+	undoButton->Bind(wxEVT_BUTTON, &MainFrame::OnUndo, this);
 	// Create an redo button
 	wxButton* redoButton = new wxButton(toolbarPanel, wxID_ANY, "Redo");
 	redoButton->SetBitmap(wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR));
 	redoButton->SetToolTip("Redo previous action");
+
 	///////////////////////tmp Panel
 	int tmpID = wxID_ANY;
 	m_idLabel = new wxStaticText(toolbarPanel, tmpID, wxString::Format("ID: %d", tmpID), wxDefaultPosition, wxDefaultSize);
@@ -290,5 +292,11 @@ void MainFrame::displayInfoOnPanel(int tubeID)
 	wxString str = str1.Append("\n").Append(str2).Append(" ").Append(str3);;
 	m_idLabel->SetLabelText(str);
 }
+
+void MainFrame::OnUndo(wxCommandEvent& event)
+{
+
+}
+
 
 

@@ -5,7 +5,9 @@
 #include <wx/wx.h>
 class Stack {
 public:
+	Stack();
 	Stack(int limit); // Constructor
+	Stack(Stack* data); // Constructor
 	~Stack(); // Destructor
 	bool isEmpty() const; // Check if stack is empty
 	bool isFull() const; // Check if stack is full

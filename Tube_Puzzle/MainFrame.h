@@ -17,6 +17,8 @@ public:
 	void updateTubeColors();
 	void highlightSelectedCol(int col_n);
 	void displayInfoOnPanel(int tubeID);
+
+	void OnUndo(wxCommandEvent& event);
 private:
 	Game* round1;
 	wxStaticText* m_idLabel;
