@@ -62,14 +62,16 @@ TubeSet* Queue::peekFrontTubeArray() const {
 	if (isEmpty()) {
 		return nullptr;
 	}
-	return front->tubeArray;
+	TubeSet* data = new TubeSet(front->tubeArray);
+	return data;
 }
 
 TubeSet* Queue::peekRearTubeArray() const {
 	if (isEmpty()) {
 		return nullptr;
 	}
-	return rear->tubeArray;
+	TubeSet* data = new TubeSet(rear->tubeArray);
+	return data;
 }
 
 Stack** Queue::peekFrontColStack() const
@@ -77,12 +79,27 @@ Stack** Queue::peekFrontColStack() const
 	if (isEmpty()) {
 		return nullptr;
 	}
-	return front->colStack;
+	int no_cols = getNoCol();
+	Stack** tmp = new Stack * [no_cols];
+	for (int i = 0;i < no_cols;i++) {
+		tmp[i] = new Stack(front->colStack[i]);
+	}
+	return tmp;
 }
 Stack** Queue::peekRearColStack() const
 {
 	if (isEmpty()) {
 		return nullptr;
 	}
-	return rear->colStack;
+	int no_cols = getNoCol();
+	Stack** tmp = new Stack * [no_cols];
+	for (int i = 0;i < no_cols;i++) {
+		tmp[i] = new Stack(rear->colStack[i]);
+	}
+	return tmp;
+}
+
+int Queue::getNoCol() const
+{
+	return front->no_col;
 }

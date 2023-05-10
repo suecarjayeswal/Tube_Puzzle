@@ -174,6 +174,17 @@ wxString TubeSet::traverseTubeSet()
 	return str;
 }
 
+int TubeSet::checkTubeMatch()
+{
+	int tcount = 0;
+	for (int i = 0; i < m_num_columns; i++) {
+		for (int j = 0; j < m_num_tubes-1; j++) {
+			tcount+= m_array[i][j][0] != m_array[i][j+1][0];
+		}
+	}
+	return tcount;
+}
+
 int TubeSet::getTotalColNo()
 {
 	return m_num_columns;

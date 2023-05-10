@@ -49,7 +49,8 @@ TubeSet* ActionStack::topTubeArray() const {
 		std::cerr << "Error: Stack is empty\n";
 		return nullptr;
 	}
-	return head->tubeArray;
+	TubeSet* data = new TubeSet(head->tubeArray);
+	return data;
 }
 
 Stack** ActionStack::topColStack() const

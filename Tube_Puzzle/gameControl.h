@@ -10,10 +10,14 @@ private:
 	TubeSet* tubes;
 	int no_col;
 	int no_tube;
+	int stepsCount;
+	int undoCount;
+	int redoCount;
+	int* values;
 	int tmp_tube_details[3];
 	Stack** colTubStack;
 	ActionStack* actions;
-	Queue* redoActions;;
+	ActionStack* redoActions;
 public:
 	Game(int no_col, int no_tube, int* values);
 	~Game();
@@ -22,7 +26,7 @@ public:
 	void reverseStack(int col);
 	void fillTmpDetails(int col_n, int color, int ID);
 	void setTmpColNo(int col);
-	int getTmpCol();	
+	int getTmpCol();
 	int getColStackTop(int col);	// get top element of stack
 	int getColStackCount(int col);	// get the number of elements in the stack
 	void makeColStackEmpty(int col_n); //make stack empty
@@ -35,12 +39,18 @@ public:
 	wxColor getWXColor(int value);
 	int getNumCols() const;
 	int getNumTubes() const;
+	int getStepsCount() const;
 
 	bool isColEmpty(int col_n);
 	bool isColFull(int col_n);
-	void swapByClick(int col_n1, int col_n2);
+	bool swapByClick(int col_n1, int col_n2);
+	bool checkMoveValidity(int col_n1, int col_n2);
 
 	void saveStateOnSwapByClick();
 	void revertAction();
-};
+	void undoRevert();
 
+	int roundCompleteCheck();
+	void hardReset();
+	
+};

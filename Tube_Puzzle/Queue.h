@@ -54,6 +54,7 @@ public:
 	Stack** peekFrontColStack() const;
 	Stack** peekRearColStack() const;
 
+	int getNoCol() const;
 };
 
 

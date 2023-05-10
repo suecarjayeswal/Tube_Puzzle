@@ -1,10 +1,12 @@
 #include "GameControl.h"
 
-Game::Game(int no_col, int no_tube, int* values) :no_col(no_col), no_tube(no_tube), tmp_tube_details{}
+Game::Game(int no_col, int no_tube, int* values) :no_col(no_col), no_tube(no_tube),stepsCount(0), undoCount(0), redoCount(0), tmp_tube_details{}
 {
 	// wxLogDebug("Entered Game contructor %p col-%d tub-%d val%p", this,no_col,no_tube,values);
 	// initializing tubeSet
 	tubes = new TubeSet(no_col, no_tube);
+	this->values = new int[no_col * no_tube];
+	for (int Index = 0; Index < no_col * no_tube; Index++) this->values[Index] = values[Index];
 	tubes->fillArray(values);
 
 	// initializing column Stacks
@@ -17,7 +19,7 @@ Game::Game(int no_col, int no_tube, int* values) :no_col(no_col), no_tube(no_tub
 
 	//initializing actions Queue
 	actions = new ActionStack();
-	redoActions = new Queue();
+	redoActions = new ActionStack();
 	// wxLogDebug("gameConstructor tubes%p colTubStack%p actions%p redoAc%p", tubes, colTubStack, actions, redoActions);
 }
 
@@ -31,6 +33,7 @@ Game::~Game()
 	delete[] colTubStack;
 	delete actions;
 	delete redoActions;
+	delete values;
 }
 
 void Game::resetTmpDetails() {
@@ -133,12 +136,12 @@ bool Game::isColFull(int col_n)
 	return false;
 }
 
-void Game::swapByClick(int col_n1, int col_n2)
+bool Game::swapByClick(int col_n1, int col_n2)
 {
 	// wxLogDebug("enter SwapBy Click");
 	if( col_n1 != -1){
 
-		if (!isColEmpty(col_n1) && !isColFull(col_n2)) {
+		if (checkMoveValidity(col_n1,col_n2)) {
 			int tub_n = (colTubStack[col_n1]->pop())%100-1;
 
 			swapTubesColor(col_n1, tub_n, col_n2, no_tube - (colTubStack[col_n2]->count())-2);
@@ -146,8 +149,23 @@ void Game::swapByClick(int col_n1, int col_n2)
 			tmp_tube_details[0] = -1;
 
 			saveStateOnSwapByClick();
+
+			stepsCount++;
+			undoCount = 0;
+			redoCount = 0;
+			return true;
+		}
+		else {
+			wxLogStatus(wxString::Format("Invalid Move"));
+			return false;
 		}
 	}
+}
+bool Game::checkMoveValidity(int col_n1, int col_n2) {
+	bool tmp = getColor(col_n1, colTubStack[col_n1]->top() % 100 - 1) == getColor(col_n2, no_tube - (colTubStack[col_n2]->count()) - 1);
+	tmp = tmp || getColor(col_n2, no_tube - (colTubStack[col_n2]->count()) - 1)==0;
+
+	return tmp && !isColEmpty(col_n1) && !isColFull(col_n2);
 }
 void Game::saveStateOnSwapByClick() {
 	//register the action 
@@ -168,9 +186,19 @@ void Game::revertAction()
 		// wxLogDebug("inside mid revert col%p tmpTub%p",colTubStack,tmpTubes);
 		// wxLogDebug("%s", traverseColStackAll());
 		// wxLogDebug("%s", traverseTubeSet());
-		redoActions->enqueue(tmpTubes, colTubStack, no_col);
 		//if(!actions->isEmpty()) tmpTubes = actions->pop();
 		tubes = tmpTubes;
+		redoActions->push(tmpTubes, colTubStack, no_col);
+		if (undoCount==0)
+		{
+			colTubStack = actions->topColStack();
+			tmpTubes = actions->pop();
+			tubes = tmpTubes;
+			redoActions->push(tmpTubes, colTubStack, no_col);
+		}
+
+		undoCount++;
+		stepsCount++;
 	}
 	else {
 		// wxLogDebug("no actions to undo");
@@ -179,6 +207,65 @@ void Game::revertAction()
 
 	// wxLogDebug("Inside revertAction redAc%p tubes%p \n%s",redoActions,tubes, traverseTubeSet());
 }
+void Game::undoRevert()
+{
+	// wxLogDebug("inside UndorevertAction%p tubes%p stack%p noCOl%d",this,tubes,colTubStack,no_col);
+	if (!redoActions->isEmpty())
+	{
+		colTubStack = redoActions->topColStack();
+		TubeSet* tmpTubes = redoActions->pop();
+		// wxLogDebug("inside mid revert col%p tmpTub%p",colTubStack,tmpTubes);
+		// wxLogDebug("%s", traverseColStackAll());
+		// wxLogDebug("%s", traverseTubeSet());
+		//if(!actions->isEmpty()) tmpTubes = actions->pop();
+		tubes = tmpTubes;
+		if (redoCount == 0)
+		{
+			colTubStack = redoActions->topColStack();
+			tmpTubes = redoActions->pop();
+			tubes = tmpTubes;
+		}
+		actions->push(tmpTubes, colTubStack, no_col);
+
+		stepsCount++;
+		redoCount++;
+	}
+	else {
+		// wxLogDebug("no actions to Undorevert");
+		wxLogStatus(wxString::Format("no actions to Undorevert"));
+	}
+
+	// wxLogDebug("Inside Undorevert redAc%p tubes%p \n%s",redoActions,tubes, traverseTubeSet());
+}
+void Game::hardReset()
+{
+	actions->makeEmpty();
+	redoActions->makeEmpty();
+	tubes->fillArray(values);
+	undoCount = 0;
+	redoCount = 0;
+	stepsCount = 0;
+	resetTmpDetails();
+
+
+	// deleting ealier colStack
+	for (int Index = 0; Index < no_col; Index++)
+	{
+		delete colTubStack[Index];
+	}
+	delete[] colTubStack;
+	// initializing column Stacks
+	colTubStack = new Stack * [no_col];
+	for (int Index = 0; Index < no_col; Index++)
+	{
+		colTubStack[Index] = new Stack(no_tube);
+	}
+}
+int Game::roundCompleteCheck()
+{
+	return tubes->checkTubeMatch()==0;
+}
+
 int Game::getNumCols() const {
 	return no_col;
 }
@@ -190,4 +277,7 @@ wxString Game::traverseTubeSet()
 
 int Game::getNumTubes() const {
 	return no_tube;
+}
+int Game::getStepsCount() const {
+	return stepsCount;
 }

@@ -15,13 +15,17 @@ public:
 	int getTubColID(int tmp);
 	int getTubID(int tmp);
 	void updateTubeColors();
-	void highlightSelectedCol(int col_n);
+	void highlightSelectedCol(int col_n,int col=0);
 	void displayInfoOnPanel(int tubeID);
 
+	void OnRedo(wxCommandEvent& event);
 	void OnUndo(wxCommandEvent& event);
+	void OnReset(wxCommandEvent& event);
+
 private:
 	Game* round1;
 	wxStaticText* m_idLabel;
+	wxStaticText* stepsCount;
 	//Stack** colTubStack;
 	wxDECLARE_EVENT_TABLE();
 };
