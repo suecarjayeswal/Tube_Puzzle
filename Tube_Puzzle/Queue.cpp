@@ -5,10 +5,13 @@ Queue::Queue() {
 	front = nullptr;
 	rear = nullptr;
 	count = 0;
+	wxLogDebug("Entered queue defConstructor %p front%p rear%p", this,front,rear);
 }
 
 Queue::~Queue() {
+	wxLogDebug("-----------------inside queue destructor %p front%p rear%p", this,front,rear);
 	while (!isEmpty()) {
+		wxLogDebug("---------------Entered queue defConstructor isEmpty", this);
 		dequeue();
 	}
 }
@@ -21,10 +24,10 @@ int Queue::size() const {
 	return count;
 }
 
-void Queue::enqueue(TubeSet* data) {
-	wxLogDebug("  Inside enqueue ");
+void Queue::enqueue(TubeSet* data, Stack** other, int no_col) {
+	wxLogDebug("  Inside enqueue%p tube%p Stack%p NoCO%d",this,data,other,no_col);
 	wxLogDebug("%s",data->traverseTubeSet());
-	Node* newNode = new Node(data);
+	Node* newNode = new Node(data,other,no_col);
 	//wxLogDebug("%s", newNode->data->traverseTubeSet());
 	if (isEmpty()) {
 		front = newNode;
@@ -37,11 +40,13 @@ void Queue::enqueue(TubeSet* data) {
 }
 
 void Queue::dequeue() {
+	wxLogDebug("inside dequeue %p", this);
 	if (isEmpty()) {
 		return;
 	}
 	Node* temp = front;
 	front = front->next;
+	wxLogDebug("inside dequeue temp%p front%p",temp,front);
 	delete temp;
 	count--;
 }
@@ -53,18 +58,31 @@ void Queue::makeEmpty() {
 }
 
 
-TubeSet* Queue::peekFront() const {
+TubeSet* Queue::peekFrontTubeArray() const {
 	if (isEmpty()) {
-		TubeSet* p = new TubeSet;
-		return p;
+		return nullptr;
 	}
-	return front->data;
+	return front->tubeArray;
 }
 
-TubeSet* Queue::peekRear() const {
+TubeSet* Queue::peekRearTubeArray() const {
 	if (isEmpty()) {
-		TubeSet* p = new TubeSet;
-		return p;
+		return nullptr;
 	}
-	return rear->data;
+	return rear->tubeArray;
+}
+
+Stack** Queue::peekFrontColStack() const
+{
+	if (isEmpty()) {
+		return nullptr;
+	}
+	return front->colStack;
+}
+Stack** Queue::peekRearColStack() const
+{
+	if (isEmpty()) {
+		return nullptr;
+	}
+	return rear->colStack;
 }

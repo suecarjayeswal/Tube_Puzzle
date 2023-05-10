@@ -2,6 +2,7 @@
 
 Game::Game(int no_col, int no_tube, int* values) :no_col(no_col), no_tube(no_tube), tmp_tube_details{}
 {
+	wxLogDebug("Entered Game contructor %p col-%d tub-%d val%p", this,no_col,no_tube,values);
 	// initializing tubeSet
 	tubes = new TubeSet(no_col, no_tube);
 	tubes->fillArray(values);
@@ -17,10 +18,12 @@ Game::Game(int no_col, int no_tube, int* values) :no_col(no_col), no_tube(no_tub
 	//initializing actions Queue
 	actions = new ActionStack();
 	redoActions = new Queue();
+	wxLogDebug("gameConstructor tubes%p colTubStack%p actions%p redoAc%p", tubes, colTubStack, actions, redoActions);
 }
 
 Game::~Game()
 {
+	wxLogDebug("-------------------Entered Game Destructor %p colTubStack%p actions%p redoAc%p", this,colTubStack,actions,redoActions);
 	for (int Index = 0; Index < no_col; Index++)
 	{
 		delete colTubStack[Index];
@@ -38,6 +41,7 @@ void Game::resetTmpDetails() {
 
 void Game::pushIDinStack(int col, int ID)
 {
+
 	colTubStack[col]->push(ID);
 }
 
@@ -55,6 +59,7 @@ void Game::swapTubesColor(int col1, int tub1, int col2, int tub2)
 
 int Game::getColor(int column, int tube)
 {
+	wxLogDebug("\t\t GamegetColor%p  %d %d", tubes, column, tube);
 	return tubes->getColor(column, tube);
 }
 
@@ -109,6 +114,17 @@ bool Game::isColEmpty(int col_n)
 	return false;
 }
 
+wxString Game::traverseColStackAll()
+{
+	wxString str = wxString::Format(" ");
+	for (int Index = 0; Index <no_col; Index++)
+	{
+		
+		str.Append("\n").Append(traverseColStack(Index));
+	}
+	return str;
+}
+
 bool Game::isColFull(int col_n)
 {
 	if (colTubStack[col_n]->isFull()) {
@@ -137,7 +153,26 @@ void Game::swapByClick(int col_n1, int col_n2)
 }
 void Game::revertAction()
 {
+	wxLogDebug("inside revertAction%p tubes%p stack%p noCOl%d",this,tubes,colTubStack,no_col);
+	if (!actions->isEmpty())
+	{
+		colTubStack = actions->topColStack();
+		TubeSet* tmpTubes = actions->pop();
+		wxLogDebug("inside mid revert col%p tmpTub%p",colTubStack,tmpTubes);
+		for (int Index = 0; Index < no_col ; Index++)
+		{
+			wxLogDebug("%s", colTubStack[Index]->traverse());
+		}
+		redoActions->enqueue(tmpTubes, colTubStack, no_col);
+		if(tmpTubes!=nullptr) tmpTubes = actions->pop();
+		tubes = tmpTubes;
+	}
+	else {
+		wxLogDebug("no actions to undo");
+		wxLogStatus(wxString::Format("no actions to undo"));
+	}
 
+	wxLogDebug("Inside revertAction redAc%p tubes%p \n%s",redoActions,tubes, traverseTubeSet());
 }
 int Game::getNumCols() const {
 	return no_col;

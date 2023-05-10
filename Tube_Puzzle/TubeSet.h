@@ -16,6 +16,8 @@ public:
 	int getID(int column, int tube) const;
 	void setID(int column, int tube, int value);
 	wxString traverseTubeSet();
+
+	int getTotalColNo();
 private:
 	int*** m_array;
 	int m_num_columns;

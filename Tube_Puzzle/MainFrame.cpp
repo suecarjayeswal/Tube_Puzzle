@@ -30,10 +30,11 @@ END_EVENT_TABLE()
 MainFrame::MainFrame(const wxString& title)
        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(400, 400))
 {
+	wxLogDebug("Entered mainFrame %p", this);
 	//game round initialization
-	int values[] = { 3,2,1,1,3,2,1,3,2,1,3,2,0,0,0,0,0,0,0,0 };
+	int values[] = {1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
 	const int col = 5;
-	const int tub = 4;
+	const int tub = 3;
 	round1 = new Game(col,tub,values);
 
 	//window layout from here
@@ -58,7 +59,7 @@ MainFrame::MainFrame(const wxString& title)
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
 	// Create a toolbar panel
-	wxPanel* toolbarPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 60));
+	wxPanel* toolbarPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 90));
 	toolbarPanel->SetBackgroundColour(wxColour(235, 235, 235));
 
 	// Create a box sizer to layout the toolbar panel
@@ -135,7 +136,7 @@ MainFrame::MainFrame(const wxString& title)
 			bar->Bind(wxEVT_LEFT_DOWN, &MainFrame::onColClick, this);
 
 			//pushing tube IDs into column's Stack
-			if(tmpColor_n!=0)	round1->pushIDinStack(Index, tmpBarID);
+			if(tmpColor_n>0)	round1->pushIDinStack(Index, tmpBarID);
 		}
 		//reversing the Column's Stack 
 		round1->reverseStack(Index);
@@ -173,6 +174,7 @@ MainFrame::MainFrame(const wxString& title)
 
 MainFrame::~MainFrame()
 {
+	wxLogDebug("-----------inside mainframe destruc%p game%p",this,round1);
 	delete round1;
 }
 
@@ -240,6 +242,7 @@ int MainFrame::getTubID(int tmp)
 	return tmp;
 }
 void MainFrame::updateTubeColors() {
+	wxLogDebug("Inside updateTubeColors%p round%p \ntube%s\nStack%s ",this,round1,round1->traverseTubeSet(),round1->traverseColStackAll());
 	for (int colIndex = 0; colIndex < round1->getNumCols(); colIndex++) {
 		// make stack empty to refilling
 		round1->makeColStackEmpty(colIndex);
@@ -247,16 +250,18 @@ void MainFrame::updateTubeColors() {
 			int tmpBarID = tube1 + tubeIndex + colIndex * 100;
 			wxPanel* bar = wxDynamicCast(FindWindow(tmpBarID), wxPanel);
 			if (bar) {
+				wxLogDebug("\t\tupdaterd1%p  %d %d",round1,colIndex,tubeIndex);
 				int color = round1->getColor(colIndex, tubeIndex);
 				bar->SetBackgroundColour(round1->getWXColor(color));
 				wxLogStatus("%d",color);
 				//pushing tube IDs into column's Stack
-				if (color != 0)	round1->pushIDinStack(colIndex, tmpBarID);
+				if (color > 0)	round1->pushIDinStack(colIndex, tmpBarID);
 				bar->Refresh();
 			}
 		}
 		round1->reverseStack(colIndex);
 	}
+	wxLogDebug("Inside later updateTubeColors%p round%p \ntube%s\nStack%s ", this, round1, round1->traverseTubeSet(), round1->traverseColStackAll());
 }
 
 void MainFrame::highlightSelectedCol(int col_n)
@@ -295,7 +300,10 @@ void MainFrame::displayInfoOnPanel(int tubeID)
 
 void MainFrame::OnUndo(wxCommandEvent& event)
 {
-
+	wxLogDebug("inside OnUndoComman%p round1%p \nTubes:%s\nStack:%s",this,round1,round1->traverseTubeSet(),round1->traverseColStackAll());
+	round1->revertAction();
+	updateTubeColors();
+	wxLogDebug("inside later OnUndoComman%p round1%p \nTubes:%s\nStack:%s", this, round1, round1->traverseTubeSet(), round1->traverseColStackAll());
 }
 
 

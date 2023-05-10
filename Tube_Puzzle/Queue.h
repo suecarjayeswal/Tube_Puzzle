@@ -1,22 +1,36 @@
 #pragma once
 #include "TubeSet.h"
-
+#include "stack.h"
 class Node {
 public:
-	TubeSet* data;
+	TubeSet* tubeArray;
+	Stack** colStack;
 	Node* next;
-
-	Node(TubeSet d) {
-		data = new TubeSet(d);
+	int no_col;
+	Node(TubeSet* data, Stack** other, int no_col, Node* next = nullptr) {
+		wxLogDebug("entered qNode Constr%p tube%p stack%p nocol%d",this,data,other,no_col);
+		this->tubeArray = new TubeSet(data);
+		this->next = next;
+		this->no_col = no_col;
+		Stack jpt;
+		colStack=jpt.copyColStack(colStack, other, no_col);
+	}
+	/*Node(TubeSet d) {
+		tubeArray = new TubeSet(d);
 		next = nullptr;
 	}
 	Node(TubeSet* d) {
-		data = (d);
+		tubeArray = (d);
 		next = nullptr;
-	}
+	}*/
 	~Node() {
-		delete next;
-		delete data;
+		wxLogDebug("---------------entered qNode Destr%p tube%p stack%p",this,tubeArray,colStack);
+		delete tubeArray;
+		//for (int Index = 0; Index < no_col; Index++)
+		//{
+		//	delete colStack[Index];
+		//}
+		//delete[] colStack;
 	}
 };
 
@@ -32,11 +46,14 @@ public:
 
 	bool isEmpty() const;
 	int size() const;
-	void enqueue(TubeSet* data);
+	void enqueue(TubeSet* data, Stack** other, int no_col);
 	void dequeue();
 	void makeEmpty();
-	TubeSet* peekFront() const;
-	TubeSet* peekRear() const;
+	TubeSet* peekFrontTubeArray() const;
+	TubeSet* peekRearTubeArray() const;
+	Stack** peekFrontColStack() const;
+	Stack** peekRearColStack() const;
+
 };
 
 

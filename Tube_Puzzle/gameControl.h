@@ -27,6 +27,7 @@ public:
 	int getColStackCount(int col);	// get the number of elements in the stack
 	void makeColStackEmpty(int col_n); //make stack empty
 	wxString traverseColStack(int col_n); //traverse
+	wxString traverseColStackAll(); //traverse
 	wxString traverseTubeSet(); //traverse tube set
 
 	void swapTubesColor(int col1, int tub1, int col2, int tub2);

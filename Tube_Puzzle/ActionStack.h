@@ -9,34 +9,39 @@ public:
 	bool isEmpty() const;
 	void push( TubeSet* data, Stack** other,int no_col) ;
 	TubeSet* pop();
-	TubeSet* top() const;
+	TubeSet* topTubeArray() const;
+	Stack** topColStack() const;
 	int count() const;
 	void makeEmpty();
 
+
 private:
-	class Node {
+	class sNode {
 	public:
-		Node( TubeSet* data, Stack** other,int no_col, Node* next = nullptr) {
+		sNode( TubeSet* data, Stack** other,int no_col, sNode* next = nullptr) {
+			wxLogDebug("Entered sNode Construc%p Tubeset%p Stack%p noCol%d", this, data, other, no_col);
 			this->tubeArray = new TubeSet(data);
 			this->next = next;
-			colStack = new Stack * [no_col];
-			for (int Index = 0; Index < no_col; Index++)
-			{
-				colStack[Index] = new Stack(other[Index]);
-			}
+			Stack jpt;
+			colStack = jpt.copyColStack(colStack, other,no_col);
+
+			wxLogDebug("sNode Constr this;tube%p colsta%p",tubeArray,colStack);
 			
 		}
-		~Node()
+
+		~sNode()
 		{
+			wxLogDebug("--------------------entered sNode Destruc%p tube%p Stack%p", this, tubeArray, colStack);;
 			delete tubeArray;
 			delete colStack;
 		}
 		TubeSet* tubeArray;
-		Node* next;
+		sNode* next;
 		Stack** colStack;
 	};
 
-	Node* head;
+	sNode* head;
 	int count_;
+	int COL_MAX_COUNT;
 };
 
