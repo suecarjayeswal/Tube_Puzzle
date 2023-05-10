@@ -8,7 +8,7 @@ public:
 	Node* next;
 	int no_col;
 	Node(TubeSet* data, Stack** other, int no_col, Node* next = nullptr) {
-		wxLogDebug("entered qNode Constr%p tube%p stack%p nocol%d",this,data,other,no_col);
+		// wxLogDebug("entered qNode Constr%p tube%p stack%p nocol%d",this,data,other,no_col);
 		this->tubeArray = new TubeSet(data);
 		this->next = next;
 		this->no_col = no_col;
@@ -24,7 +24,7 @@ public:
 		next = nullptr;
 	}*/
 	~Node() {
-		wxLogDebug("---------------entered qNode Destr%p tube%p stack%p",this,tubeArray,colStack);
+		// wxLogDebug("---------------entered qNode Destr%p tube%p stack%p",this,tubeArray,colStack);
 		delete tubeArray;
 		//for (int Index = 0; Index < no_col; Index++)
 		//{

@@ -5,11 +5,11 @@ ActionStack::ActionStack() {
 	head = nullptr;
 	count_ = 0;
 	COL_MAX_COUNT = 0;
-	wxLogDebug("Entered ActionStack defConstructor %p head%p ", this,head);
+	// wxLogDebug("Entered ActionStack defConstructor %p head%p ", this,head);
 }
 
 ActionStack::~ActionStack() {
-	wxLogDebug("---------------inside ActionStack Destructor %p",this);
+	// wxLogDebug("---------------inside ActionStack Destructor %p",this);
 	makeEmpty();
 
 }
@@ -19,7 +19,7 @@ bool ActionStack::isEmpty() const {
 }
 
 void ActionStack::push( TubeSet* data, Stack** other,int no_col) {
-	wxLogDebug("inside ActionStack%p push data%p stack%p noCol%d=================%d", this, data, other, no_col,count());
+	// wxLogDebug("inside ActionStack%p push data%p stack%p noCol%d=================%d", this, data, other, no_col,count());
 	sNode* newNode = new sNode(data,other,no_col);
 	newNode->next = head;
 	head = newNode;
@@ -29,7 +29,7 @@ void ActionStack::push( TubeSet* data, Stack** other,int no_col) {
 
 
 TubeSet* ActionStack::pop() {
-	wxLogDebug("inside ActionStack pop%p head%p=================%d",this,head,count());
+	// wxLogDebug("inside ActionStack pop%p head%p=================%d",this,head,count());
 	if (isEmpty()) {
 		std::cerr << "Error: Stack is empty\n";
 		return nullptr;
@@ -40,7 +40,7 @@ TubeSet* ActionStack::pop() {
 	TubeSet* data = new TubeSet(temp->tubeArray);
 	delete temp;
 	count_--;
-	wxLogDebug("inside later ActionStackpop data%p m_arr", data);
+	// wxLogDebug("inside later ActionStackpop data%p m_arr", data);
 	return data;
 }
 
@@ -70,10 +70,10 @@ int ActionStack::count() const {
 }
 
 void ActionStack::makeEmpty() {
-	wxLogDebug("inside ActionStack makeEmpty %p head %p", this,head);
+	// wxLogDebug("inside ActionStack makeEmpty %p head %p", this,head);
 	while (!isEmpty()) {
 		sNode* temp = head;
-		wxLogDebug("inside makeEmpty:tmp%p-head-%p to delete %p",temp,head, temp->tubeArray);
+		// wxLogDebug("inside makeEmpty:tmp%p-head-%p to delete %p",temp,head, temp->tubeArray);
 		head = head->next;
 		delete temp;
 		count_--;

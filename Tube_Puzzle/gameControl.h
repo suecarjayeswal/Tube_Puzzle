@@ -40,6 +40,7 @@ public:
 	bool isColFull(int col_n);
 	void swapByClick(int col_n1, int col_n2);
 
+	void saveStateOnSwapByClick();
 	void revertAction();
 };
 

@@ -19,19 +19,19 @@ private:
 	class sNode {
 	public:
 		sNode( TubeSet* data, Stack** other,int no_col, sNode* next = nullptr) {
-			wxLogDebug("Entered sNode Construc%p Tubeset%p Stack%p noCol%d", this, data, other, no_col);
+			// wxLogDebug("Entered sNode Construc%p Tubeset%p Stack%p noCol%d", this, data, other, no_col);
 			this->tubeArray = new TubeSet(data);
 			this->next = next;
 			Stack jpt;
 			colStack = jpt.copyColStack(colStack, other,no_col);
 
-			wxLogDebug("sNode Constr this;tube%p colsta%p",tubeArray,colStack);
+			// wxLogDebug("sNode Constr this;tube%p colsta%p",tubeArray,colStack);
 			
 		}
 
 		~sNode()
 		{
-			wxLogDebug("--------------------entered sNode Destruc%p tube%p Stack%p", this, tubeArray, colStack);;
+			// wxLogDebug("--------------------entered sNode Destruc%p tube%p Stack%p", this, tubeArray, colStack);;
 			delete tubeArray;
 			delete colStack;
 		}

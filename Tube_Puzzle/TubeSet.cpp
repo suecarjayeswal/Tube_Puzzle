@@ -22,7 +22,7 @@ TubeSet::TubeSet()
 			m_array[i][j][1] = 0;
 		}
 	}
-	wxLogDebug("Entered TubeSet defConstructor %p m_arr%p", this,m_array);
+	// wxLogDebug("Entered TubeSet defConstructor %p m_arr%p", this,m_array);
 }
 TubeSet::TubeSet(int num_columns = 3, int num_tubes = 3)
 	: m_num_columns(num_columns), m_num_tubes(num_tubes)
@@ -36,12 +36,12 @@ TubeSet::TubeSet(int num_columns = 3, int num_tubes = 3)
 			m_array[i][j][1] = 0;
 		}
 	}
-	wxLogDebug("Entered tubeSet constrWithCol%dTub%d m_arr%p %p",num_columns,num_tubes,m_array, this);
+	// wxLogDebug("Entered tubeSet constrWithCol%dTub%d m_arr%p %p",num_columns,num_tubes,m_array, this);
 }
 
 TubeSet::TubeSet( TubeSet* other)
 {
-	wxLogDebug("Entered tubeSet PointConstructor%p otherM_arr%p col%dtub%d m_arr%p this%p \n%s", other,other->m_array,other->m_num_columns,other->m_num_tubes,m_array, this, traverseTubeSet());
+	// wxLogDebug("Entered tubeSet PointConstructor%p otherM_arr%p col%dtub%d m_arr%p this%p \n%s", other,other->m_array,other->m_num_columns,other->m_num_tubes,m_array, this, traverseTubeSet());
 	m_num_columns = other->m_num_columns;
 	m_num_tubes = other->m_num_tubes;
 	m_array = new int** [m_num_columns];
@@ -53,7 +53,7 @@ TubeSet::TubeSet( TubeSet* other)
 			m_array[i][j][1] = other->getID(i, j);
 		}
 	}
-	wxLogDebug("Entered tubeSet PointConstructorthis%p M_arr%p col%dtub%d \n%s", this, this->m_array, this->m_num_columns, this->m_num_tubes, traverseTubeSet());
+	// wxLogDebug("Entered tubeSet PointConstructorthis%p M_arr%p col%dtub%d \n%s", this, this->m_array, this->m_num_columns, this->m_num_tubes, traverseTubeSet());
 }
 //
 //TubeSet& TubeSet::operator=(const TubeSet* other) {
@@ -75,7 +75,7 @@ TubeSet::TubeSet( TubeSet* other)
 
 TubeSet::~TubeSet()
 {
-	wxLogDebug("-------------inside tubeset Destructor m_arr%p %p",m_array, this);
+	// wxLogDebug("-------------inside tubeset Destructor m_arr%p %p",m_array, this);
 	if (m_array != nullptr) {
 		for (int i = 0; i < m_num_columns; i++) {
 			if (m_array[i] != nullptr) {

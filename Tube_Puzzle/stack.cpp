@@ -4,7 +4,7 @@
 #include <iostream>
 #include <wx/wx.h>
 Stack::Stack() {
-	wxLogDebug("Entered stack defConstructor %p", this);
+	// wxLogDebug("Entered stack defConstructor %p", this);
 	TOP = -1;
 	MAX_LIMIT = 10;
 	elements = nullptr;
@@ -14,12 +14,12 @@ Stack::Stack(int limit) {
 	TOP = -1;
 	MAX_LIMIT = limit;
 	elements = new int[MAX_LIMIT];
-	wxLogDebug("Entered stackLimitConstr%d %p elem%p", limit, this,elements);
+	// wxLogDebug("Entered stackLimitConstr%d %p elem%p", limit, this,elements);
 }
 
 Stack::Stack(Stack* data)
 {
-	wxLogDebug("Entered stack PointConstructorData%p,MAX%d ele%p this%p ele%p \n%s", data,data->MAX_LIMIT,data->elements, this, elements,data->traverse());
+	// wxLogDebug("Entered stack PointConstructorData%p,MAX%d ele%p this%p ele%p \n%s", data,data->MAX_LIMIT,data->elements, this, elements,data->traverse());
 	TOP = data->TOP;
 	MAX_LIMIT = data->MAX_LIMIT;
 	elements = new int[MAX_LIMIT];
@@ -27,26 +27,26 @@ Stack::Stack(Stack* data)
 		elements[i] = data->elements[i];
 		/*if (data->elements[i] > 0) elements[i] = data->elements[i];
 		else elements[i] = 0;*/
-		wxLogDebug("\t\t%d %d",elements[i],data->elements[i]);
+		// wxLogDebug("\t\t%d %d",elements[i],data->elements[i]);
 	}
-	wxLogDebug("Entered later stack PointConstructorData%p %p ele%p",data, this,elements);
+	// wxLogDebug("Entered later stack PointConstructorData%p %p ele%p",data, this,elements);
 }
 
 
 Stack::~Stack() {
-	wxLogDebug("------------------Entered stack destructr %p ele%p", this, elements);
+	// wxLogDebug("------------------Entered stack destructr %p ele%p", this, elements);
 	delete elements;
 }
 
 Stack** Stack::copyColStack(Stack** one, Stack** two,int no_col)
 {
-	wxLogDebug("Entered stack colStackCopier one%p two%p noCol%d %p",one,two,no_col, this);
+	// wxLogDebug("Entered stack colStackCopier one%p two%p noCol%d %p",one,two,no_col, this);
 	one = new Stack * [no_col];
 	for (int Index = 0; Index < no_col; Index++)
 	{
 		one[Index] = new Stack(two[Index]);
 	}
-	wxLogDebug("colCopier newOne %p", one);
+	// wxLogDebug("colCopier newOne %p", one);
 	return one;
 }
 
