@@ -5,7 +5,7 @@
 
 class MainFrame : public wxFrame {
 public:
-	MainFrame(const wxString& title);
+	MainFrame(const wxString& title,int* status);
 	~MainFrame();
 	void OnQuit(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
@@ -24,7 +24,8 @@ public:
 
 private:
 	Game* round1;
-	wxStaticText* m_idLabel;
+	int* status;
+	//wxStaticText* m_idLabel;
 	wxStaticText* stepsCount;
 	//Stack** colTubStack;
 	wxDECLARE_EVENT_TABLE();

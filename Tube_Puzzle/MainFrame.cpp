@@ -28,8 +28,8 @@ END_EVENT_TABLE()
 //END_EVENT_TABLE()
 
 
-MainFrame::MainFrame(const wxString& title)
-       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600))
+MainFrame::MainFrame(const wxString& title, int* status)
+       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600)),status(status)
 {
 	// wxLogDebug("Entered mainFrame %p", this);
 	//game round initialization
@@ -271,6 +271,11 @@ void MainFrame::onColClick(wxMouseEvent& event)
 			round1->resetTmpDetails();
 		}
 	}
+	if (round1->roundCompleteCheck()) {
+
+		*status = 1;
+		Close(true);
+	}
 }
 
 void MainFrame::onOutClick(wxMouseEvent& event)
@@ -363,7 +368,7 @@ void MainFrame::displayInfoOnPanel(int tubeID)
 	str3.Append(wxString::Format(" %d", col_n));
 	str3.Append(wxString::Format(" \n")).Append(round1->traverseTubeSet());
 	wxString str = str1.Append("\n").Append(str2).Append(" ").Append(str3);;
-	m_idLabel->SetLabelText(str);
+	//m_idLabel->SetLabelText(str);
 }
 
 void MainFrame::OnUndo(wxCommandEvent& event)
