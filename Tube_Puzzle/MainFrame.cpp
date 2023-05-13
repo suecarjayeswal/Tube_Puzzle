@@ -59,7 +59,7 @@ MainFrame::MainFrame(const wxString& title, int* status)
     SetStatusText("Welcome to Tube Puzzle Game!");
 
 	// Create a panel to hold the main content
-	wxPanel* mainPanel = new wxPanel(this, wxID_ANY);
+	mainPanel = new wxPanel(this, wxID_ANY);
 	mainPanel->SetMinSize(wxSize(600, 600));
 
 	// Create a box sizer to layout the main panel
@@ -272,9 +272,7 @@ void MainFrame::onColClick(wxMouseEvent& event)
 		}
 	}
 	if (round1->roundCompleteCheck()) {
-
-		*status = 1;
-		Close(true);
+		completionPage();
 	}
 }
 
@@ -388,14 +386,38 @@ void MainFrame::OnRedo(wxCommandEvent& event)
 }
 void MainFrame::OnReset(wxCommandEvent& event)
 {
+
+	completionPage();
+	/*
 	// Perform reset logic here
 	round1->hardReset();
 	updateTubeColors();
 
 	// Refresh or update the panels to reflect the reset state
 	stepsCount->SetLabel("0");// Clear the steps count
-	//wxDynamicCast(FindWindow(playPanelID), wxPanel)->Refresh();
+	//wxDynamicCast(FindWindow(playPanelID), wxPanel)->Refresh();*/
 }
+void MainFrame::completionPage()
+{
+	mainPanel->Hide();
+	// Create UI elements
+	wxStaticText* completionLabel = new wxStaticText(this, wxID_ANY, "Level Completed!");
+	wxButton* nextLevelButton = new wxButton(this, wxID_ANY, "Next Level");
+
+	// Create a sizer to layout the elements
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->Add(completionLabel, 0, wxALL, 10);
+	sizer->Add(nextLevelButton, 0, wxALL, 10);
+
+	// Set the sizer for the frame
+	SetSizerAndFit(sizer);
+
+	// Bind the button click event to an event handler
+	//nextLevelButton->Bind(wxEVT_BUTTON, &CompletionPage::OnNextLevel, this);
+	*status = 1;
+	//Close(true);
+}
+
 //
 //MainFrame::wxDECLARE_EVENT_TABLE()
 //{

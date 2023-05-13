@@ -22,9 +22,12 @@ public:
 	void OnUndo(wxCommandEvent& event);
 	void OnReset(wxCommandEvent& event);
 
+
+	void completionPage();
 private:
 	Game* round1;
 	int* status;
+	wxPanel* mainPanel;
 	//wxStaticText* m_idLabel;
 	wxStaticText* stepsCount;
 	//Stack** colTubStack;
