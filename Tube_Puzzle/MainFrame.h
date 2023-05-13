@@ -5,7 +5,7 @@
 
 class MainFrame : public wxFrame {
 public:
-	MainFrame(const wxString& title, int* status, int values[]);
+	MainFrame(const wxString& title);
 	~MainFrame();
 	void OnQuit(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
@@ -25,9 +25,11 @@ public:
 	void onNextLevel(wxCommandEvent& event);
 
 	void completionPage();
+
+	void tubeGenerator(int arr[]);
 private:
 	Game* round1;
-	int* status;
+	int GameLevel;
 	int* values;
 	wxPanel* mainPanel;
 	wxPanel* playPanel;

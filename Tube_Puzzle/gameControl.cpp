@@ -30,7 +30,7 @@ Game::~Game()
 	{
 		delete colTubStack[Index];
 	}
-	delete[] colTubStack;
+//	delete[] colTubStack;
 	delete actions;
 	delete redoActions;
 	delete values;

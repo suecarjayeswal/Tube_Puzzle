@@ -15,7 +15,7 @@ ActionStack::~ActionStack() {
 }
 
 bool ActionStack::isEmpty() const {
-	return count_ == 0;;
+	return count_ == 0;
 }
 
 void ActionStack::push( TubeSet* data, Stack** other,int no_col) {

@@ -13,7 +13,9 @@ enum colIDs {
 	col2,
 	tube1 = 1001,
 	tube2,
-	stepsCID=02,
+	stepsCID = 02,
+	levelCID = 3,
+	completionPanelID = 9
 };
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -28,21 +30,17 @@ END_EVENT_TABLE()
 //END_EVENT_TABLE()
 
 
-MainFrame::MainFrame(const wxString& title, int* status,int values[])
-       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600)),status(status),values(values)
+MainFrame::MainFrame(const wxString& title)
+       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600))
 {
 	// wxLogDebug("Entered mainFrame %p", this);
 	//game round initialization
-	//int** valuesList = new int* [5];
-	//valuesList[0] = new int({ 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 });
-	//int values[] = {1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
-	int values1[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
-	int values2[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
-	int values3[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
-	int values4[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
 	const int col = 7;
 	const int tub = 4;
-	round1 = new Game(col,tub,values);
+	GameLevel = 1;
+	int arr[28];
+	tubeGenerator((arr));
+	round1 = new Game(col,tub,arr);
 
 	//window layout from here
     wxMenu *menuFile = new wxMenu;
@@ -81,10 +79,10 @@ MainFrame::MainFrame(const wxString& title, int* status,int values[])
 	stepsPanel->SetSizer(stepsSizer);
 	stepsSizer->AddStretchSpacer();
 
-	wxStaticText* stepsLabel = new wxStaticText(stepsPanel, wxID_ANY, "Steps: ");
+	wxStaticText* stepsLabel = new wxStaticText(stepsPanel, wxID_ANY, "Steps: \nLevel:");
 	stepsSizer->Add(stepsLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 20);
 
-	stepsCount = new wxStaticText(stepsPanel, stepsCID, "0");
+	stepsCount = new wxStaticText(stepsPanel, stepsCID, wxString::Format("%d\n%d",round1->getStepsCount(),GameLevel));
 	stepsCount->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	stepsSizer->Add(stepsCount, 0, wxALIGN_CENTER_VERTICAL | wxALL, 10);
 
@@ -225,6 +223,7 @@ MainFrame::~MainFrame()
 {
 	// wxLogDebug("-----------inside mainframe destruc%p game%p",this,round1);
 	delete round1;
+
 }
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -325,7 +324,7 @@ void MainFrame::updateTubeColors() {
 	}
 	// wxLogDebug("Inside later updateTubeColors%p round%p \ntube%s\nStack%s ", this, round1, round1->traverseTubeSet(), round1->traverseColStackAll());
 	wxStaticText* stepC = wxDynamicCast(FindWindow(stepsCID), wxStaticText);
-	stepC->SetLabel(wxString::Format("%d", round1->getStepsCount()));
+	stepC->SetLabel(wxString::Format("%d %d", round1->getStepsCount(),GameLevel));
 
 	
 }
@@ -386,27 +385,44 @@ void MainFrame::OnRedo(wxCommandEvent& event)
 }
 void MainFrame::OnReset(wxCommandEvent& event)
 {
+	//completionPage();
 	// Perform reset logic here
 	round1->hardReset();
 	updateTubeColors();
 
 	// Refresh or update the panels to reflect the reset state
-	stepsCount->SetLabel("0");// Clear the steps count
-	//wxDynamicCast(FindWindow(playPanelID), wxPanel)->Refresh();
+	stepsCount->Refresh();// Clear the steps count
+	//wxDynamicCast(FindWindow(playPanelID), wxPanel)->Refresh(); 
 }
 void MainFrame::onNextLevel(wxCommandEvent& event)
 {
-	*status = *status+1;
-	Close(true);
+	GameLevel++;
+	delete round1;
+	int arr[28];
+	tubeGenerator((arr));
+	round1 = new Game(7, 4, arr);
+	for (int Index = 0; Index < 7; Index++) {
+		wxPanel* column = wxDynamicCast(FindWindow(col1 + Index), wxPanel);
+		column->Show();
+	}
+	wxPanel* completionPanel = wxDynamicCast(FindWindow(completionPanelID), wxPanel);
+	completionPanel->Destroy();
+	//playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
+	playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
+	updateTubeColors();
+	this->Refresh();
 }
 void MainFrame::completionPage()
 {
-	playPanel->DestroyChildren();
+	for (int Index = 0; Index < 7; Index++) {
+		wxPanel* column = wxDynamicCast(FindWindow(col1 + Index), wxPanel);
+		column->Hide();
+	}
 	//playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
 	playPanel->Unbind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
 	// Assuming you have a playPanel named 'playPanel'
 // ...
-	wxPanel* tmpPanel = new wxPanel(playPanel, wxID_ANY, wxDefaultPosition, wxSize(598/2, 598/2.1), wxBORDER_NONE);
+	wxPanel* tmpPanel = new wxPanel(playPanel, completionPanelID, wxDefaultPosition, wxSize(598/2, 598/2.1), wxBORDER_NONE);
 	tmpPanel->SetBackgroundColour(wxColour(255,255,255));
 	wxBoxSizer* tmpPanelSizer = new wxBoxSizer(wxVERTICAL);
 	tmpPanel->SetSizer(tmpPanelSizer);
@@ -433,11 +449,78 @@ void MainFrame::completionPage()
 	playSizer->AddStretchSpacer();
 	playPanel->SetSizer(playSizer);
 
-	this->SetSize(wxSize(601,600));
+	mainPanel->SetSize(wxSize(600+GameLevel%2,600));
 	this->Refresh();
 	//this->Update();
 }
 
+void MainFrame::tubeGenerator(int arr[]) {
+	int a, b, c, d, e, f, i = 0;
+	a = b = c = d = e = 4;
+	f = 8;
+	srand(time(NULL));
+	while ((a + b + c + d + e + f) > 0)
+	{
+		int value = rand() % 6;
+		switch (value) {
+		case 1:
+			if (a == 0) continue;
+			arr[i++] = 1;
+			a--;
+			break;
+		case 2:
+			if (b == 0) continue;
+			arr[i++] = 2;
+			b--;
+			break;
+		case 3:
+			if (c == 0) continue;
+			arr[i++] = 3;
+			c--;
+			break;
+		case 4:
+			if (d == 0) continue;
+			arr[i++] = 4;
+			d--;
+			break;
+		case 5:
+			if (e == 0) continue;
+			arr[i++] = 5;
+			e--;
+			break;
+		default:
+			if (f == 0) continue;
+			arr[i++] = 0;
+			f--;
+			break;
+		}
+	}
+	for (int Index = 0; Index < 28; Index++)
+	{
+		wxLogDebug("%d", arr[Index]);
+	}
+	wxLogDebug("sorted");
+	for (int i = 0; i < 7; i++)
+	{
+		for (int j = 1;j < 4;j++) {
+
+			if (arr[i * 4 + j] == 0) {
+				int k;
+				for (k = 0;k < 4;k++) if (arr[i * 4 + k] != 0) break;
+				if (k - 1 == 3 && arr[i * 4 + k - 1] == 0) break;
+				arr[i * 4 + j] = arr[i * 4 + k];
+				arr[i * 4 + k] = 0;
+			}
+		}
+	}
+
+
+	for (int Index = 0; Index < 28; Index++)
+	{
+		wxLogDebug("%d", arr[Index]);
+	}
+
+}
 //
 //MainFrame::wxDECLARE_EVENT_TABLE()
 //{
