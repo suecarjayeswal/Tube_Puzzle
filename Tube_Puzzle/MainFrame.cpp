@@ -28,19 +28,19 @@ END_EVENT_TABLE()
 //END_EVENT_TABLE()
 
 
-MainFrame::MainFrame(const wxString& title, int* status)
-       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600)),status(status)
+MainFrame::MainFrame(const wxString& title, int* status,int values[])
+       : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600)),status(status),values(values)
 {
 	// wxLogDebug("Entered mainFrame %p", this);
 	//game round initialization
 	//int** valuesList = new int* [5];
 	//valuesList[0] = new int({ 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 });
-	int values[] = {1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
+	//int values[] = {1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
 	int values1[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
 	int values2[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
 	int values3[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
 	int values4[] = { 1,2,3,3,1,2,3,1,2,3,1,2,0,0,0,0,0,0,0,0 };
-	const int col = 5;
+	const int col = 7;
 	const int tub = 4;
 	round1 = new Game(col,tub,values);
 
@@ -120,10 +120,10 @@ MainFrame::MainFrame(const wxString& title, int* status)
 	mainPanel->SetSizer(mainSizer);
 
 	// Create a play panel
-	wxPanel* playPanel = new wxPanel(mainPanel, playPanelID,wxDefaultPosition,wxSize(598,568));
+	playPanel = new wxPanel(mainPanel, playPanelID,wxDefaultPosition,wxSize(598,568));
 	playPanel->SetBackgroundColour(wxColour(210, 210, 210));
 	// Create a sizer for the play panel
-	wxBoxSizer* playSizer = new wxBoxSizer(wxHORIZONTAL);
+	playSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*TubeSet tubes(col, tub);
@@ -218,7 +218,6 @@ MainFrame::MainFrame(const wxString& title, int* status)
 	frameSizer->Add(mainPanel, wxSizerFlags(1).Align(wxALIGN_CENTER));
 	frameSizer->AddStretchSpacer();
 	SetSizer(frameSizer);
-
 
 }
 
@@ -369,6 +368,7 @@ void MainFrame::displayInfoOnPanel(int tubeID)
 	//m_idLabel->SetLabelText(str);
 }
 
+
 void MainFrame::OnUndo(wxCommandEvent& event)
 {
 	// wxLogDebug("inside OnUndoComman%p round1%p \nTubes:%s\nStack:%s",this,round1,round1->traverseTubeSet(),round1->traverseColStackAll());
@@ -386,36 +386,56 @@ void MainFrame::OnRedo(wxCommandEvent& event)
 }
 void MainFrame::OnReset(wxCommandEvent& event)
 {
-
-	completionPage();
-	/*
 	// Perform reset logic here
 	round1->hardReset();
 	updateTubeColors();
 
 	// Refresh or update the panels to reflect the reset state
 	stepsCount->SetLabel("0");// Clear the steps count
-	//wxDynamicCast(FindWindow(playPanelID), wxPanel)->Refresh();*/
+	//wxDynamicCast(FindWindow(playPanelID), wxPanel)->Refresh();
+}
+void MainFrame::onNextLevel(wxCommandEvent& event)
+{
+	*status = *status+1;
+	Close(true);
 }
 void MainFrame::completionPage()
 {
-	mainPanel->Hide();
-	// Create UI elements
-	wxStaticText* completionLabel = new wxStaticText(this, wxID_ANY, "Level Completed!");
-	wxButton* nextLevelButton = new wxButton(this, wxID_ANY, "Next Level");
+	playPanel->DestroyChildren();
+	//playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
+	playPanel->Unbind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
+	// Assuming you have a playPanel named 'playPanel'
+// ...
+	wxPanel* tmpPanel = new wxPanel(playPanel, wxID_ANY, wxDefaultPosition, wxSize(598/2, 598/2.1), wxBORDER_NONE);
+	tmpPanel->SetBackgroundColour(wxColour(255,255,255));
+	wxBoxSizer* tmpPanelSizer = new wxBoxSizer(wxVERTICAL);
+	tmpPanel->SetSizer(tmpPanelSizer);
 
-	// Create a sizer to layout the elements
-	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(completionLabel, 0, wxALL, 10);
-	sizer->Add(nextLevelButton, 0, wxALL, 10);
+	// Create a font with custom size and style
+	wxFont font(wxFontInfo(10).Bold());
+	// Create a static text for the "well done" message
+	wxStaticText* wellDoneText = new wxStaticText(tmpPanel, wxID_ANY, "Well done, level completed",	wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+	wellDoneText->SetFont(font);
 
-	// Set the sizer for the frame
-	SetSizerAndFit(sizer);
+	tmpPanelSizer->AddStretchSpacer();
+	tmpPanelSizer->Add(wellDoneText, 0, wxALIGN_CENTER | wxALL, 10);
 
-	// Bind the button click event to an event handler
-	//nextLevelButton->Bind(wxEVT_BUTTON, &CompletionPage::OnNextLevel, this);
-	*status = 1;
-	//Close(true);
+	// Create a button for the next level
+	wxButton* nextLevelButton = new wxButton(tmpPanel, wxID_ANY, "Next Level", wxDefaultPosition, wxDefaultSize);
+	nextLevelButton->Bind(wxEVT_BUTTON, &MainFrame::onNextLevel, this);
+	tmpPanelSizer->Add(nextLevelButton, 0, wxALIGN_CENTER | wxALL, 10);
+	tmpPanelSizer->AddStretchSpacer();
+	// Center the tmpPanel inside the playPanel
+	
+	//playSizer->AddSpacer(10);
+	playSizer->Add(tmpPanel, 0, wxALIGN_CENTER);
+	playSizer->AddStretchSpacer();
+	playSizer->AddStretchSpacer();
+	playPanel->SetSizer(playSizer);
+
+	this->SetSize(wxSize(601,600));
+	this->Refresh();
+	//this->Update();
 }
 
 //

@@ -5,7 +5,7 @@
 
 class MainFrame : public wxFrame {
 public:
-	MainFrame(const wxString& title,int* status);
+	MainFrame(const wxString& title, int* status, int values[]);
 	~MainFrame();
 	void OnQuit(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
@@ -17,17 +17,21 @@ public:
 	void updateTubeColors();
 	void highlightSelectedCol(int col_n,int col=0);
 	void displayInfoOnPanel(int tubeID);
+	
 
 	void OnRedo(wxCommandEvent& event);
 	void OnUndo(wxCommandEvent& event);
 	void OnReset(wxCommandEvent& event);
-
+	void onNextLevel(wxCommandEvent& event);
 
 	void completionPage();
 private:
 	Game* round1;
 	int* status;
+	int* values;
 	wxPanel* mainPanel;
+	wxPanel* playPanel;
+	wxBoxSizer* playSizer;
 	//wxStaticText* m_idLabel;
 	wxStaticText* stepsCount;
 	//Stack** colTubStack;
