@@ -1,3 +1,4 @@
+// GameControl implementation file
 #include "GameControl.h"
 
 Game::Game(int no_col, int no_tube, int* values) :no_col(no_col), no_tube(no_tube),stepsCount(0), undoCount(0), redoCount(0), tmp_tube_details{}
@@ -183,10 +184,6 @@ void Game::revertAction()
 	{
 		colTubStack = actions->topColStack();
 		TubeSet* tmpTubes = actions->pop();
-		// wxLogDebug("inside mid revert col%p tmpTub%p",colTubStack,tmpTubes);
-		// wxLogDebug("%s", traverseColStackAll());
-		// wxLogDebug("%s", traverseTubeSet());
-		//if(!actions->isEmpty()) tmpTubes = actions->pop();
 		tubes = tmpTubes;
 		redoActions->push(tmpTubes, colTubStack, no_col);
 		if (undoCount==0)
@@ -214,10 +211,6 @@ void Game::undoRevert()
 	{
 		colTubStack = redoActions->topColStack();
 		TubeSet* tmpTubes = redoActions->pop();
-		// wxLogDebug("inside mid revert col%p tmpTub%p",colTubStack,tmpTubes);
-		// wxLogDebug("%s", traverseColStackAll());
-		// wxLogDebug("%s", traverseTubeSet());
-		//if(!actions->isEmpty()) tmpTubes = actions->pop();
 		tubes = tmpTubes;
 		if (redoCount == 0)
 		{

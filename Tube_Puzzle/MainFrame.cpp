@@ -1,4 +1,5 @@
 
+// MainFrame implementation file
 #include "GameControl.h"
 #include "stack.h"
 #include "MainFrame.h"
@@ -8,26 +9,22 @@
 using namespace std;
 
 enum colIDs {
+	stepsCID = 2,
+	levelCID = 3,
+	completionPanelID = 9,
 	playPanelID = 101,
 	col1 = 10001,
 	col2,
 	tube1 = 1001,
 	tube2,
-	stepsCID = 02,
-	levelCID = 3,
-	completionPanelID = 9
 };
+
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(ID_QUIT, MainFrame::OnQuit)
     EVT_MENU(ID_ABOUT, MainFrame::OnAbout)
-	
 END_EVENT_TABLE()
-//
-//BEGIN_EVENT_TABLE(MainFrame, wxFrame)
-//EVT_MENU(ID_QUIT, MainFrame::OnQuit)
-//EVT_MENU(ID_ABOUT, MainFrame::OnAbout)
-//END_EVENT_TABLE()
+
 
 
 MainFrame::MainFrame(const wxString& title)
@@ -37,52 +34,42 @@ MainFrame::MainFrame(const wxString& title)
 	//game round initialization
 	const int col = 7;
 	const int tub = 4;
-	GameLevel = 1;
+	current_Game_Lvl = 1;
 	int arr[28];
-	tubeGenerator((arr));
-	round1 = new Game(col,tub,arr);
+	TubeGenerator((arr));
+	current_Round = new Game(col,tub,arr);
 
 	//window layout from here
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(ID_ABOUT, "&About\tF1", "Show about dialog");
     menuFile->AppendSeparator();
     menuFile->Append(ID_QUIT, "E&xit\tAlt-X", "Quit this program");
-
     wxMenuBar *menuBar = new wxMenuBar;
     menuBar->Append(menuFile, "&File");
-
     SetMenuBar(menuBar);
 
     CreateStatusBar();
-    SetStatusText("Welcome to Tube Puzzle Game!");
+    SetStatusText("Welcome to Tube Puzzle Game! Transfer a tube over same colored tube by clicking on columns");
 
 	// Create a panel to hold the main content
 	mainPanel = new wxPanel(this, wxID_ANY);
-	mainPanel->SetMinSize(wxSize(600, 600));
-
-	// Create a box sizer to layout the main panel
-	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+	mainPanel->SetSize(wxSize(600, 600));
+	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL); // a box sizer to layout the main panel
 
 	// Create a toolbar panel
 	wxPanel* toolbarPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 90));
 	toolbarPanel->SetBackgroundColour(wxColour(235, 235, 235));
-
-	// Create a box sizer to layout the toolbar panel
 	wxBoxSizer* toolbarSizer = new wxBoxSizer(wxHORIZONTAL);
-	///////////////////////tmp Panel
-	int tmpID = wxID_ANY;
-	//m_idLabel = new wxStaticText(toolbarPanel, tmpID, wxString::Format("ID: %d", tmpID), wxDefaultPosition, wxDefaultSize);
+
+
 	wxPanel* stepsPanel = new wxPanel(toolbarPanel, wxID_ANY);
 	stepsPanel->SetBackgroundColour(wxColour(230, 230, 230));
-
 	wxBoxSizer* stepsSizer = new wxBoxSizer(wxHORIZONTAL);
 	stepsPanel->SetSizer(stepsSizer);
 	stepsSizer->AddStretchSpacer();
-
 	wxStaticText* stepsLabel = new wxStaticText(stepsPanel, wxID_ANY, "Steps: \nLevel:");
 	stepsSizer->Add(stepsLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 20);
-
-	stepsCount = new wxStaticText(stepsPanel, stepsCID, wxString::Format("%d\n%d",round1->getStepsCount(),GameLevel));
+	stepsCount = new wxStaticText(stepsPanel, stepsCID, wxString::Format("%d\n%d",current_Round->getStepsCount(),current_Game_Lvl));
 	stepsCount->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	stepsSizer->Add(stepsCount, 0, wxALIGN_CENTER_VERTICAL | wxALL, 10);
 
@@ -105,93 +92,106 @@ MainFrame::MainFrame(const wxString& title)
 
 	// Add the undo button to the toolbar
 	toolbarSizer->Add(undoButton, wxSizerFlags().Border(wxALL, 5).Align(wxALIGN_CENTER_VERTICAL));
-	// Add the redo button to the toolbar
 	toolbarSizer->Add(redoButton, wxSizerFlags().Border(wxALL, 5).Align(wxALIGN_CENTER_VERTICAL));
-
-	// Add the toolbar sizer to the toolbar panel
 	toolbarPanel->SetSizer(toolbarSizer);
 
 	// Add the toolbar panel to the main sizer
 	mainSizer->Add(toolbarPanel, wxSizerFlags().Expand().Border(wxALL, 0));
-	
-	// Set the main sizer for the main panel
 	mainPanel->SetSizer(mainSizer);
 
 	// Create a play panel
 	playPanel = new wxPanel(mainPanel, playPanelID,wxDefaultPosition,wxSize(598,568));
 	playPanel->SetBackgroundColour(wxColour(210, 210, 210));
-	// Create a sizer for the play panel
 	playSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/*TubeSet tubes(col, tub);
-	tubes.fillArray(values);*/
-	
-
 	playSizer->AddStretchSpacer(); // this strecher will help centre the columns horizontally
+
+	// create an array of columnPanels and columnSizers for each Panel
 	wxPanel* columnPanel[col];
 	wxBoxSizer* columnSizer[col];
-	
-	/*colTubStack = new Stack * [col];*/
-	//initialization of Stack for each column
-	int tmpColor_n = 0;
+
+	int tmpColor_n = 0; // temporary variable to store color of tube during iterations below
 	for (int Index = 0; Index < col ; Index++)
 	{
-		/*colTubStack[Index] = new Stack(col);*/
 		int colWidth = 0.9*playPanel->GetSize().GetWidth() /col;
 		int colHeight = 0.8 * playPanel->GetSize().GetHeight();
-		columnPanel[Index] = new wxPanel(playPanel, col1+Index, wxDefaultPosition, wxSize(35, 300), wxTAB_TRAVERSAL);
+		columnPanel[Index] = new wxPanel(playPanel, col1+Index, wxDefaultPosition, wxSize(35, 300), wxTAB_TRAVERSAL); //definition of columnPanel
 		columnPanel[Index]->SetBackgroundColour(wxColour(255, 255, 255));
-		columnSizer[Index] = new wxBoxSizer(wxVERTICAL);
+
+		columnSizer[Index] = new wxBoxSizer(wxVERTICAL); //definition of columnSizer
 		columnSizer[Index]->AddStretchSpacer();
+
+
 		for (int i = 0; i < tub; i++) {
 			int tmpBarID = tube1 + i + Index * 100;
 			int barWidth = columnPanel[Index]->GetSize().GetWidth()*0.9;
 			int barHeight = 0.95*columnPanel[Index]->GetSize().GetHeight() /tub ;
 			wxPanel* bar = new wxPanel(columnPanel[Index], tmpBarID, wxDefaultPosition, wxSize(barWidth, barHeight));
 
-			tmpColor_n = round1->getColor(Index, i);
-			bar->SetBackgroundColour(round1->getWXColor(tmpColor_n));
+
+			tmpColor_n = current_Round->getColor(Index, i);
+			bar->SetBackgroundColour(current_Round->getWXColor(tmpColor_n));
 			columnSizer[Index]->Add(bar, wxSizerFlags().Border(wxALL, 2).Center());
 
-			bar->Bind(wxEVT_MOTION, &MainFrame::onColHover, this);
-			bar->Bind(wxEVT_LEFT_DOWN, &MainFrame::onColClick, this);
+			bar->Bind(wxEVT_MOTION, &MainFrame::OnColHover, this); // for debugging purposes
+			bar->Bind(wxEVT_LEFT_DOWN, &MainFrame::OnColClick, this);
 
-			//pushing tube IDs into column's Stack
-			if(tmpColor_n>0)	round1->pushIDinStack(Index, tmpBarID);
+			//pushing tube IDs into column's stack indexed at Index inside GameControl current_Round
+			if(tmpColor_n>0)	current_Round->pushIDinStack(Index, tmpBarID);
 		}
-		//reversing the Column's Stack 
-		round1->reverseStack(Index);
+		//reversing the Column's Stack
+		current_Round->reverseStack(Index);
 
 		columnSizer[Index]->AddStretchSpacer();
 		columnPanel[Index]->SetSizer(columnSizer[Index]);
 		playSizer->Add(columnPanel[Index], wxSizerFlags().Center().Border(wxALL, 5));
-		columnPanel[Index]->Bind(wxEVT_MOTION, &MainFrame::onColHover, this);
-		columnPanel[Index]->Bind(wxEVT_LEFT_DOWN, &MainFrame::onColClick, this);
+		columnPanel[Index]->Bind(wxEVT_MOTION, &MainFrame::OnColHover, this);
+		columnPanel[Index]->Bind(wxEVT_LEFT_DOWN, &MainFrame::OnColClick, this);
 	}
-	// saving the Firs Instance
-	round1->saveStateOnSwapByClick();
+	// saving the current state into undoStack
+	current_Round->saveStateOnSwapByClick();
 
 
-	playSizer->AddStretchSpacer(); // this strecher will help centre the columns horizontally
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	wxPanel* completionPanel = new wxPanel(playPanel, completionPanelID, wxDefaultPosition, wxSize(598 / 2, 598 / 2.1), wxBORDER_NONE);
+	completionPanel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* completionPanelSizer = new wxBoxSizer(wxVERTICAL);
+	completionPanel->SetSizer(completionPanelSizer);
 
 
-	// Set the play sizer for the play panel
+	wxFont font(wxFontInfo(10).Bold());
+	wxStaticText* wellDoneText = new wxStaticText(completionPanel, wxID_ANY, "Well done, level completed", wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
+	wellDoneText->SetFont(font);
+
+	completionPanelSizer->AddStretchSpacer();
+	completionPanelSizer->Add(wellDoneText, 0, wxALIGN_CENTER | wxALL, 10);
+
+
+	// Create a button for the next level
+	wxButton* nextLevelButton = new wxButton(completionPanel, wxID_ANY, "Next Level", wxDefaultPosition, wxDefaultSize);
+	nextLevelButton->Bind(wxEVT_BUTTON, &MainFrame::OnNextLevel, this);
+	completionPanelSizer->Add(nextLevelButton, 0, wxALIGN_CENTER | wxALL, 10);
+	completionPanelSizer->AddStretchSpacer();
+
+
+	playSizer->Add(completionPanel, wxSizerFlags().Center().Border(wxALL, 5));
+	playSizer->AddStretchSpacer();
 	playPanel->SetSizer(playSizer);
-	// Bind PlayPanel to outClick
-	playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
+	completionPanel->Hide(); // while gameplay is on, hide the completion panel
+
+
+	playPanel->SetSizer(playSizer);
+	playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::OnOutClick, this); // this bind will help unselect a column
 
 	// Add the play panel to the main sizer, centering it within the main panel
 	mainSizer->AddStretchSpacer();
-	mainSizer->Add(playPanel, wxSizerFlags().Center().Border(wxALL, 5).Proportion(1));
+	mainSizer->Add(playPanel, wxSizerFlags(1).Center().Border(wxALL, 5).Proportion(1));
 	mainSizer->AddStretchSpacer();
 
 	// Create a reset panel
 	wxPanel* resetPanel = new wxPanel(mainPanel, wxID_ANY, wxDefaultPosition, wxSize(-1, 40));
 	resetPanel->SetBackgroundColour(wxColour(235, 235, 235));
-
-	// Create a sizer for the reset panel
 	wxBoxSizer* resetPanelSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	// Create a reset button
@@ -203,8 +203,6 @@ MainFrame::MainFrame(const wxString& title)
 	// Add the reset button to the reset panel sizer
 	resetPanelSizer->AddStretchSpacer();
 	resetPanelSizer->Add(resetButton, wxSizerFlags().Border(wxALL, 5).Align(wxALIGN_CENTER_VERTICAL));
-
-	// Set the reset panel sizer for the reset panel
 	resetPanel->SetSizer(resetPanelSizer);
 
 	// Add the reset panel to the main panel sizer
@@ -216,14 +214,12 @@ MainFrame::MainFrame(const wxString& title)
 	frameSizer->Add(mainPanel, wxSizerFlags(1).Align(wxALIGN_CENTER));
 	frameSizer->AddStretchSpacer();
 	SetSizer(frameSizer);
-
 }
 
 MainFrame::~MainFrame()
 {
-	// wxLogDebug("-----------inside mainframe destruc%p game%p",this,round1);
-	delete round1;
-
+	// wxLogDebug("-----------inside mainframe destruc%p game%p",this,current_Round);
+	delete current_Round;
 }
 
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -233,231 +229,206 @@ void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    wxMessageBox("Tube Puzzle Game is a game in which players solve puzzles by manipulating tubes on a board.", "About Tube Puzzle Game", wxOK | wxICON_INFORMATION, this);
+    wxMessageBox("The Tube Puzzle Game is a C++ project that presents an engaging and challenging puzzle-solving experience. It involves arranging a grid of tubes in a specific order by swapping them within columns.\n\n It was created by Himanshu Gurung and Swikar Jaiswal for partial fulfillment of their course COMP 202 under supervision of Dr. Prakash Poudyal. \n\n We are grateful towards our supervisor and Department of Mathematics, School of Science as well as our Classmates at BSc. in Computational Mathematics 2021 Batch", "About Tube Puzzle Game", wxOK | wxICON_INFORMATION, this);
 }
 
-void MainFrame::onColHover(wxMouseEvent& event)
+void MainFrame::OnColHover(wxMouseEvent& event)
 {
-	int tubId = event.GetId();
-	int tub_n = getTubID(tubId);
-	int col_n = getTubColID(tubId);
-	int tubColor = round1->getColor(col_n, tub_n);
-	wxLogStatus(wxString::Format("col no: %d %d %d", col_n,tubColor, round1->roundCompleteCheck()));
+	int tubId = event.GetId(); // gets ID of current object clicked
+	int tub_n = GetTubID(tubId); //returns index of corresponding tube or top tube of that column
+	int col_n = GetTubColID(tubId); // return index of column clicked
+	int tubColor = current_Round->getColor(col_n, tub_n); // return color index at given column and tube indices
+	wxLogStatus(wxString::Format("col no: %d %d %d", col_n,tubColor, current_Round->roundCompleteCheck()));
 }
 
-void MainFrame::onColClick(wxMouseEvent& event)
+void MainFrame::OnColClick(wxMouseEvent& event)
 {
 	int tubId = event.GetId();
+	int tub_n = GetTubID(tubId);
+	int col_n = GetTubColID(tubId);
+	int tmpColno = current_Round->getTmpCol();
 
-	int tub_n = getTubID(tubId);
-	int col_n = getTubColID(tubId);
-	int tmpColno = round1->getTmpCol();
-
-	highlightSelectedCol(col_n);
-	//displayInfoOnPanel(tubId);
-	round1->setTmpColNo(col_n);
-	bool changed = round1->swapByClick(tmpColno,col_n);
+	HighlightSelectedCol(col_n);
+	current_Round->setTmpColNo(col_n); // sets current selected column in Temporary
+	bool changed = current_Round->swapByClick(tmpColno,col_n); // return if swap was successful
 	wxLogStatus(wxString::Format("%d", changed));
 	if (changed)
 	{
-		updateTubeColors();
-		//round1->resetTmpDetails();
+		UpdateTubeColors();
+		
 	}
 	else {
-		if(round1->getTmpCol()!=-1) {
-			highlightSelectedCol(col_n,-1);
-			round1->resetTmpDetails();
+		if(current_Round->getTmpCol()!=-1) {
+			HighlightSelectedCol(col_n,-1);
+			current_Round->resetTmpDetails();
 		}
 	}
-	if (round1->roundCompleteCheck()) {
-		completionPage();
+	// In the below, if round is completed, completionPage is shown
+	if (current_Round->roundCompleteCheck()) {
+		CompletionPage();
 	}
 }
 
-void MainFrame::onOutClick(wxMouseEvent& event)
+// in below, clicking outside the columns is handled
+void MainFrame::OnOutClick(wxMouseEvent& event)
 {
-	highlightSelectedCol(-1);
-	round1->resetTmpDetails();
+	HighlightSelectedCol(-1);
+	current_Round->resetTmpDetails();
 }
 
-int MainFrame::getTubColID(int tmp)
+// takes columnID to return index of column
+int MainFrame::GetTubColID(int tmp)
 {
-	if (tmp >= 10000) {
+	if (tmp >= 10000) { // if tmp is ID of column
 		tmp = tmp % 10000 - 1;
 	}
 	else {
-		tmp = (tmp - 1000) / 100;
+		tmp = (tmp - 1000) / 100; // if tmp is ID of tube
 	}
 	return tmp;
 }
 
-int MainFrame::getTubID(int tmp)
+int MainFrame::GetTubID(int tmp)
 {
 	if (tmp >= 10000) {
-		tmp =(round1->getColStackTop(getTubColID(tmp)))%100 - 1;
-		
+		tmp =(current_Round->getColStackTop(GetTubColID(tmp)))%100 - 1;
 	}
 	else {
 		tmp = tmp % 100 - 1;
 	}
 	return tmp;
 }
-void MainFrame::updateTubeColors() {
-	// wxLogDebug("Inside updateTubeColors%p round%p \ntube%s\nStack%s ",this,round1,round1->traverseTubeSet(),round1->traverseColStackAll());
-	for (int colIndex = 0; colIndex < round1->getNumCols(); colIndex++) {
+
+void MainFrame::UpdateTubeColors() {
+	for (int colIndex = 0; colIndex < current_Round->getNumCols(); colIndex++) {
 		// make stack empty to refilling
-		round1->makeColStackEmpty(colIndex);
-		for (int tubeIndex = 0; tubeIndex < round1->getNumTubes(); tubeIndex++) {
+		current_Round->makeColStackEmpty(colIndex);
+
+
+		for (int tubeIndex = 0; tubeIndex < current_Round->getNumTubes(); tubeIndex++) {
 			int tmpBarID = tube1 + tubeIndex + colIndex * 100;
 			wxPanel* bar = wxDynamicCast(FindWindow(tmpBarID), wxPanel);
+
 			if (bar) {
-				//// wxLogDebug("\t\tupdaterd1%p  %d %d",round1,colIndex,tubeIndex);
-				int color = round1->getColor(colIndex, tubeIndex);
-				bar->SetBackgroundColour(round1->getWXColor(color));
-				//wxLogStatus("%d",color);
-				//pushing tube IDs into column's Stack
-				if (color > 0)	round1->pushIDinStack(colIndex, tmpBarID);
+				int color = current_Round->getColor(colIndex, tubeIndex);
+				bar->SetBackgroundColour(current_Round->getWXColor(color));
+				if (color > 0)	current_Round->pushIDinStack(colIndex, tmpBarID);
 				bar->Refresh();
 			}
 		}
-		round1->reverseStack(colIndex);
+		current_Round->reverseStack(colIndex);
 	}
-	// wxLogDebug("Inside later updateTubeColors%p round%p \ntube%s\nStack%s ", this, round1, round1->traverseTubeSet(), round1->traverseColStackAll());
+	// update StepCounter label
 	wxStaticText* stepC = wxDynamicCast(FindWindow(stepsCID), wxStaticText);
-	stepC->SetLabel(wxString::Format("%d %d", round1->getStepsCount(),GameLevel));
-
-	
+	stepC->SetLabel(wxString::Format("%d\n%d", current_Round->getStepsCount(), current_Game_Lvl));
 }
 
-void MainFrame::highlightSelectedCol(int col_n,int col)
+void MainFrame::HighlightSelectedCol(int col_n,int ifHardColor)
 {
-	for (int Index = 0; Index < round1->getNumCols() ; Index++)
+	// unHighlight all other columns except at index col_n
+	// if ifHardColor == -1, highlight it hard
+	for (int Index = 0; Index < current_Round->getNumCols() ; Index++)
 	{
-		
 		wxPanel* selectedPanel = wxDynamicCast(FindWindow(col1 + Index), wxPanel);
 		selectedPanel->SetBackgroundColour(wxColour(255,255,255));
+
 		if (Index == col_n) {
 			selectedPanel->SetBackgroundColour(wxColour(200, 200, 200));
-			if (col==-1) selectedPanel->SetBackgroundColour(wxColour(100, 100, 100));
-			
+			if (ifHardColor ==-1) selectedPanel->SetBackgroundColour(wxColour(100, 100, 100));
+
 		}
 		selectedPanel->Refresh();
 	}
 }
 
-void MainFrame::displayInfoOnPanel(int tubeID)
+void MainFrame::DisplayInfoOnPanel(int tubeID)
 {
 	int tubId = tubeID;
-	int tub_n = getTubID(tubId);
-	int col_n = getTubColID(tubId);
-	int tubColor = round1->getColor(col_n, tub_n);
-	int ColTop_n = getTubID(round1->getColStackTop(col_n));
-	int TopTubColor = round1->getColor(col_n, ColTop_n);
+	int tub_n = GetTubID(tubId);
+	int col_n = GetTubColID(tubId);
+	int tubColor = current_Round->getColor(col_n, tub_n);
+	int ColTop_n = GetTubID(current_Round->getColStackTop(col_n));
+	int TopTubColor = current_Round->getColor(col_n, ColTop_n);
 	wxString str1 = wxString::Format("Clicked:%d(%d)(%d)-Col%d TOP%d(%d) ", tubId, tub_n, tubColor, col_n, ColTop_n, TopTubColor);
-	wxString str2 = wxString::Format(" Count:%d", round1->getColStackCount(col_n)).Append(" ").Append(round1->traverseColStack(col_n));
+	wxString str2 = wxString::Format(" Count:%d", current_Round->getColStackCount(col_n)).Append(" ").Append(current_Round->traverseColStack(col_n));
 
-	int tmpColno = round1->getTmpCol();
+	int tmpColno = current_Round->getTmpCol();
 	wxString str3 = wxString::Format(" tmp%d", tmpColno);
 
-
-
 	str3.Append(wxString::Format(" %d", col_n));
-	str3.Append(wxString::Format(" \n")).Append(round1->traverseTubeSet());
+	str3.Append(wxString::Format(" \n")).Append(current_Round->traverseTubeSet());
 	wxString str = str1.Append("\n").Append(str2).Append(" ").Append(str3);;
-	//m_idLabel->SetLabelText(str);
 }
 
 
 void MainFrame::OnUndo(wxCommandEvent& event)
 {
-	// wxLogDebug("inside OnUndoComman%p round1%p \nTubes:%s\nStack:%s",this,round1,round1->traverseTubeSet(),round1->traverseColStackAll());
-	round1->revertAction();
-	updateTubeColors();
-	// wxLogDebug("inside later OnUndoComman%p round1%p \nTubes:%s\nStack:%s", this, round1, round1->traverseTubeSet(), round1->traverseColStackAll());
+	current_Round->revertAction();
+	UpdateTubeColors();
 }
 
 void MainFrame::OnRedo(wxCommandEvent& event)
 {
-	// wxLogDebug("inside OnRedoComman%p round1%p \nTubes:%s\nStack:%s",this,round1,round1->traverseTubeSet(),round1->traverseColStackAll());
-	round1->undoRevert();
-	updateTubeColors();
-	// wxLogDebug("inside later OnRedoComman%p round1%p \nTubes:%s\nStack:%s", this, round1, round1->traverseTubeSet(), round1->traverseColStackAll());
+	current_Round->undoRevert();
+	UpdateTubeColors();
 }
+
 void MainFrame::OnReset(wxCommandEvent& event)
 {
-	//completionPage();
-	// Perform reset logic here
-	round1->hardReset();
-	updateTubeColors();
+	//CompletionPage();
+	current_Round->hardReset();
+	HighlightSelectedCol(-1);
+	UpdateTubeColors();
 
-	// Refresh or update the panels to reflect the reset state
 	stepsCount->Refresh();// Clear the steps count
-	//wxDynamicCast(FindWindow(playPanelID), wxPanel)->Refresh(); 
 }
-void MainFrame::onNextLevel(wxCommandEvent& event)
+
+void MainFrame::OnNextLevel(wxCommandEvent& event)
 {
-	GameLevel++;
-	delete round1;
+	current_Game_Lvl++;
+	delete current_Round;
+
 	int arr[28];
-	tubeGenerator((arr));
-	round1 = new Game(7, 4, arr);
+	TubeGenerator((arr));
+	current_Round = new Game(7, 4, arr);
+	// unHide the panels and hide the completionPanel
 	for (int Index = 0; Index < 7; Index++) {
 		wxPanel* column = wxDynamicCast(FindWindow(col1 + Index), wxPanel);
 		column->Show();
 	}
 	wxPanel* completionPanel = wxDynamicCast(FindWindow(completionPanelID), wxPanel);
-	completionPanel->Destroy();
-	//playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
-	playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
-	updateTubeColors();
+	completionPanel->Hide();
+
+	playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::OnOutClick, this);
+	UpdateTubeColors();
+
+	// the following forces the window to put everything in their rightful position and state // works like a charm to refresh
+	playPanel->SetSize(wxSize(playPanel->GetSize().GetWidth() - current_Game_Lvl % 2, playPanel->GetSize().GetHeight()));
 	this->Refresh();
 }
-void MainFrame::completionPage()
+void MainFrame::CompletionPage()
 {
+	// just hide all the columns and show completion Page
 	for (int Index = 0; Index < 7; Index++) {
 		wxPanel* column = wxDynamicCast(FindWindow(col1 + Index), wxPanel);
 		column->Hide();
 	}
-	//playPanel->Bind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
-	playPanel->Unbind(wxEVT_LEFT_DOWN, &MainFrame::onOutClick, this);
-	// Assuming you have a playPanel named 'playPanel'
-// ...
-	wxPanel* tmpPanel = new wxPanel(playPanel, completionPanelID, wxDefaultPosition, wxSize(598/2, 598/2.1), wxBORDER_NONE);
-	tmpPanel->SetBackgroundColour(wxColour(255,255,255));
-	wxBoxSizer* tmpPanelSizer = new wxBoxSizer(wxVERTICAL);
-	tmpPanel->SetSizer(tmpPanelSizer);
+	playPanel->Unbind(wxEVT_LEFT_DOWN, &MainFrame::OnOutClick, this); //unbinding to avoid errors
+	wxPanel* completionPanel = wxDynamicCast(FindWindow(completionPanelID), wxPanel);
+	completionPanel->Show();
 
-	// Create a font with custom size and style
-	wxFont font(wxFontInfo(10).Bold());
-	// Create a static text for the "well done" message
-	wxStaticText* wellDoneText = new wxStaticText(tmpPanel, wxID_ANY, "Well done, level completed",	wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER);
-	wellDoneText->SetFont(font);
-
-	tmpPanelSizer->AddStretchSpacer();
-	tmpPanelSizer->Add(wellDoneText, 0, wxALIGN_CENTER | wxALL, 10);
-
-	// Create a button for the next level
-	wxButton* nextLevelButton = new wxButton(tmpPanel, wxID_ANY, "Next Level", wxDefaultPosition, wxDefaultSize);
-	nextLevelButton->Bind(wxEVT_BUTTON, &MainFrame::onNextLevel, this);
-	tmpPanelSizer->Add(nextLevelButton, 0, wxALIGN_CENTER | wxALL, 10);
-	tmpPanelSizer->AddStretchSpacer();
-	// Center the tmpPanel inside the playPanel
-	
-	//playSizer->AddSpacer(10);
-	playSizer->Add(tmpPanel, 0, wxALIGN_CENTER);
-	playSizer->AddStretchSpacer();
-	playSizer->AddStretchSpacer();
-	playPanel->SetSizer(playSizer);
-
-	mainPanel->SetSize(wxSize(600+GameLevel%2,600));
+	playPanel->SetSize(wxSize(playPanel->GetSize().GetWidth() + current_Game_Lvl % 2, playPanel->GetSize().GetHeight()));
 	this->Refresh();
-	//this->Update();
 }
 
-void MainFrame::tubeGenerator(int arr[]) {
+void MainFrame::TubeGenerator(int arr[]) {
+
+	//creating variables to store count of each of 5 colors, one var(f) to Count noColor,
 	int a, b, c, d, e, f, i = 0;
 	a = b = c = d = e = 4;
 	f = 8;
+
+	// just create a random number and modulo it to get tube color, use the color if colorCount Left and decrement colorCount
 	srand(time(NULL));
 	while ((a + b + c + d + e + f) > 0)
 	{
@@ -495,36 +466,19 @@ void MainFrame::tubeGenerator(int arr[]) {
 			break;
 		}
 	}
-	for (int Index = 0; Index < 28; Index++)
-	{
-		wxLogDebug("%d", arr[Index]);
-	}
-	wxLogDebug("sorted");
 	for (int i = 0; i < 7; i++)
 	{
+		// for each column
 		for (int j = 1;j < 4;j++) {
-
+			// for each tube
 			if (arr[i * 4 + j] == 0) {
+				// if it's nonColored tube then replace it the first colored tube in the column
 				int k;
-				for (k = 0;k < 4;k++) if (arr[i * 4 + k] != 0) break;
-				if (k - 1 == 3 && arr[i * 4 + k - 1] == 0) break;
+				for (k = 0;k < 4;k++) if (arr[i * 4 + k] != 0) break; // find index of first colored tube
+				if (k - 1 == 3 && arr[i * 4 + k - 1] == 0) break; // if found no colored tube then move to next column,
 				arr[i * 4 + j] = arr[i * 4 + k];
 				arr[i * 4 + k] = 0;
 			}
 		}
 	}
-
-
-	for (int Index = 0; Index < 28; Index++)
-	{
-		wxLogDebug("%d", arr[Index]);
-	}
-
 }
-//
-//MainFrame::wxDECLARE_EVENT_TABLE()
-//{
-//}
-
-
-

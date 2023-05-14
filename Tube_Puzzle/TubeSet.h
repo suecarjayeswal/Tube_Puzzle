@@ -1,4 +1,4 @@
-//GameControl.h
+//tubeset.h
 #pragma once
 #include <wx/wx.h>
 class TubeSet {
