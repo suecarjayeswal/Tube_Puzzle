@@ -8,8 +8,8 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/yourusername/tube-puzzle-game.svg)](https://github.com/yourusername/tube-puzzle-game/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/yourusername/tube-puzzle-game.svg)](https://github.com/yourusername/tube-puzzle-game/pulls)
+[![GitHub Issues](https://img.shields.io/github/issues/yourusername/tube-puzzle-game.svg)](https://github.com/suecarjayeswal/Tube_Puzzle/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/yourusername/tube-puzzle-game.svg)](https://github.com/suecarjayeswal/Tube_Puzzle/pulls)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
@@ -107,11 +107,12 @@ Tube_Puzzle/
 
 Some screenshots of the Tube Puzzle Game:
 <p align="center">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle/Screenshots/HomeScreen.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle/Screenshots/CompletionPage.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle/Screenshots/Others.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle/Screenshots/FlowOfExecution.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle/Screenshots/ClassesDesign.png">
+
+  <img src="https://github.com/suecarjayeswal/Tube_Puzzle/blob/IntialBranch/Screenshots/Screenshots/HomeScreen.png">
+  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/CompletionPage.png">
+  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/Others.png">
+  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/FlowOfExecution.png">
+  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/ClassesDesign.png">
 </p>
 
 ## 💡 What We Learned <a name = "what-we-learned"></a>
