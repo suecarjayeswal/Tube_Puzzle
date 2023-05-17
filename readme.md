@@ -8,8 +8,8 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/yourusername/tube-puzzle-game.svg)](https://github.com/suecarjayeswal/Tube_Puzzle/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/yourusername/tube-puzzle-game.svg)](https://github.com/suecarjayeswal/Tube_Puzzle/pulls)
+[![GitHub Issues](https://img.shields.io/github/issues/yourusername/tube-puzzle-game.svg)](https://github.com/yourusername/tube-puzzle-game/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/yourusername/tube-puzzle-game.svg)](https://github.com/yourusername/tube-puzzle-game/pulls)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
@@ -106,17 +106,12 @@ Tube_Puzzle/
 ## 📷 Screenshots <a name="screenshots"></a>
 
 Some screenshots of the Tube Puzzle Game:
-![First Screen shot](Screenshots/CompletionPage.png)
----
-<p align="center">
+![HomeScreen](Screenshots\HomeScreen.png)
+![CompletionPage](Screenshots\CompletionPage.png)
+![Others](Screenshots\Others.png)
+![FlowOfExecution](Screenshots\FlowOfExecution.png)
+![ClassesDesign](Screenshots\ClassesDesign.png)
 
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle/blob/IntialBranch/Screenshots/Screenshots/HomeScreen.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/CompletionPage.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/Others.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/FlowOfExecution.png">
-  <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/ClassesDesign.png">
-</p>
----
 ## 💡 What We Learned <a name = "what-we-learned"></a>
 
 While developing the Tube Puzzle Game project, we gained valuable experience in various areas, including:
