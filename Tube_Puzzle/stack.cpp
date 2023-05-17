@@ -3,50 +3,74 @@
 #include "Stack.h"
 #include <iostream>
 #include <wx/wx.h>
+/**
+ * This is the constructor for a Stack class that initializes the top index to -1, sets the maximum limit to 10, and
+ * initializes the elements array to nullptr.
+ */
 Stack::Stack() {
-	// wxLogDebug("Entered stack defConstructor %p", this);
 	TOP = -1;
 	MAX_LIMIT = 10;
 	elements = nullptr;
 }
+
+/**
+ * This is a constructor for a Stack class that initializes the top index and maximum limit of the stack and creates an
+ * array to store the elements.
+ *
+ * @param limit The parameter "limit" is an integer value that represents the maximum number of elements that can be stored
+ * in the stack. It is used to initialize the "MAX_LIMIT" variable and allocate memory for the "elements" array.
+ */
 Stack::Stack(int limit) {
-	
+
 	TOP = -1;
 	MAX_LIMIT = limit;
 	elements = new int[MAX_LIMIT];
-	// wxLogDebug("Entered stackLimitConstr%d %p elem%p", limit, this,elements);
 }
 
+/**
+ * This is a constructor for the Stack class that creates a new Stack object with the same properties as an existing Stack
+ * object.
+ *
+ * @param data The parameter `data` is a pointer to an object of the `Stack` class. It is being used to initialize the new
+ * `Stack` object being created with the same values as the `data` object.
+ */
 Stack::Stack(Stack* data)
 {
-	// wxLogDebug("Entered stack PointConstructorData%p,MAX%d ele%p this%p ele%p \n%s", data,data->MAX_LIMIT,data->elements, this, elements,data->traverse());
 	TOP = data->TOP;
 	MAX_LIMIT = data->MAX_LIMIT;
 	elements = new int[MAX_LIMIT];
 	for (int i = 0; i < MAX_LIMIT; i++) {
 		elements[i] = data->elements[i];
-		/*if (data->elements[i] > 0) elements[i] = data->elements[i];
-		else elements[i] = 0;*/
-		// wxLogDebug("\t\t%d %d",elements[i],data->elements[i]);
 	}
-	// wxLogDebug("Entered later stack PointConstructorData%p %p ele%p",data, this,elements);
 }
 
 
+/**
+ * This is a destructor for the Stack class that deletes the elements of the stack.
+ */
 Stack::~Stack() {
-	// wxLogDebug("------------------Entered stack destructr %p ele%p", this, elements);
 	delete elements;
 }
 
+/**
+ * The function copies a stack of columns from one array to another in C++.
+ *
+ * @param one one is a pointer to a pointer of Stack objects. It is the destination array where the copied Stack objects
+ * will be stored.
+ * @param two The parameter "two" is a pointer to an array of pointers to Stack objects.
+ * @param no_col no_col is an integer parameter that represents the number of columns in a two-dimensional array of Stack
+ * objects.
+ *
+ * @return The function `copyColStack` is returning a pointer to a `Stack` object, which is a pointer to an array of
+ * `Stack` objects.
+ */
 Stack** Stack::copyColStack(Stack** one, Stack** two,int no_col)
 {
-	// wxLogDebug("Entered stack colStackCopier one%p two%p noCol%d %p",one,two,no_col, this);
 	one = new Stack * [no_col];
 	for (int Index = 0; Index < no_col; Index++)
 	{
 		one[Index] = new Stack(two[Index]);
 	}
-	// wxLogDebug("colCopier newOne %p", one);
 	return one;
 }
 
@@ -98,7 +122,7 @@ void Stack::reverse() {
 		pop();
 		arr[i++] = element;
 	}
-	
+
 	while (j <i) {
 		int element = arr[j++];
 		push(element);

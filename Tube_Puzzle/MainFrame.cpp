@@ -27,6 +27,11 @@ END_EVENT_TABLE()
 
 
 
+/**
+ * This function creates the main frame of a Tube Puzzle Game, including the toolbar, play panel, and reset panel.
+ *
+ * @param title The title of the main window frame.
+ */
 MainFrame::MainFrame(const wxString& title)
        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600))
 {
@@ -216,12 +221,22 @@ MainFrame::MainFrame(const wxString& title)
 	SetSizer(frameSizer);
 }
 
+/**
+ * The destructor of the MainFrame class deletes the current_Round object.
+ */
 MainFrame::~MainFrame()
 {
 	// wxLogDebug("-----------inside mainframe destruc%p game%p",this,current_Round);
 	delete current_Round;
 }
 
+/**
+ * The function closes the main frame of the application when the quit command is triggered.
+ *
+ * @param WXUNUSED WXUNUSED is a macro defined in the wxWidgets library that is used to indicate that a function parameter
+ * is intentionally unused and should not generate a compiler warning. It is typically used to avoid warnings about unused
+ * parameters in function definitions.
+ */
 void MainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     Close(true);
@@ -232,6 +247,12 @@ void MainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     wxMessageBox("The Tube Puzzle Game is a C++ project that presents an engaging and challenging puzzle-solving experience. It involves arranging a grid of tubes in a specific order by swapping them within columns.\n\n It was created by Himanshu Gurung and Swikar Jaiswal for partial fulfillment of their course COMP 202 under supervision of Dr. Prakash Poudyal. \n\n We are grateful towards our supervisor and Department of Mathematics, School of Science as well as our Classmates at BSc. in Computational Mathematics 2021 Batch", "About Tube Puzzle Game", wxOK | wxICON_INFORMATION, this);
 }
 
+/**
+ * The function retrieves information about a clicked object and logs the column number, color index, and whether the
+ * current round is complete.
+ *
+ * @param event wxMouseEvent object that contains information about the mouse event that triggered the function call.
+ */
 void MainFrame::OnColHover(wxMouseEvent& event)
 {
 	int tubId = event.GetId(); // gets ID of current object clicked
@@ -255,7 +276,7 @@ void MainFrame::OnColClick(wxMouseEvent& event)
 	if (changed)
 	{
 		UpdateTubeColors();
-		
+
 	}
 	else {
 		if(current_Round->getTmpCol()!=-1) {
@@ -299,6 +320,9 @@ int MainFrame::GetTubID(int tmp)
 	return tmp;
 }
 
+/**
+ * This function updates the colors of the tubes in a game and also updates the step counter label.
+ */
 void MainFrame::UpdateTubeColors() {
 	for (int colIndex = 0; colIndex < current_Round->getNumCols(); colIndex++) {
 		// make stack empty to refilling
@@ -323,6 +347,14 @@ void MainFrame::UpdateTubeColors() {
 	stepC->SetLabel(wxString::Format("%d\n%d", current_Round->getStepsCount(), current_Game_Lvl));
 }
 
+/**
+ * This function highlights a selected column in a wxPanel by changing its background color.
+ *
+ * @param col_n The index of the column to be highlighted.
+ * @param ifHardColor An integer parameter that determines whether to highlight the selected column with a hard color or
+ * not. If the value is -1, the selected column will be highlighted with a hard color. Otherwise, it will be highlighted
+ * with a normal color.
+ */
 void MainFrame::HighlightSelectedCol(int col_n,int ifHardColor)
 {
 	// unHighlight all other columns except at index col_n
@@ -341,6 +373,11 @@ void MainFrame::HighlightSelectedCol(int col_n,int ifHardColor)
 	}
 }
 
+/**
+ * The function displays information about a clicked tube and the current state of the game on a panel.
+ *
+ * @param tubeID The ID of the tube that was clicked on.
+ */
 void MainFrame::DisplayInfoOnPanel(int tubeID)
 {
 	int tubId = tubeID;
@@ -383,6 +420,12 @@ void MainFrame::OnReset(wxCommandEvent& event)
 	stepsCount->Refresh();// Clear the steps count
 }
 
+/**
+ * The function handles the event of moving to the next level in a game and generates a new game round with updated
+ * parameters.
+ *
+ * @param event wxCommandEvent object that triggered the event handler function
+ */
 void MainFrame::OnNextLevel(wxCommandEvent& event)
 {
 	current_Game_Lvl++;
@@ -406,6 +449,9 @@ void MainFrame::OnNextLevel(wxCommandEvent& event)
 	playPanel->SetSize(wxSize(playPanel->GetSize().GetWidth() - current_Game_Lvl % 2, playPanel->GetSize().GetHeight()));
 	this->Refresh();
 }
+/**
+ * The function hides all columns and shows the completion page in a wxWidgets GUI application.
+ */
 void MainFrame::CompletionPage()
 {
 	// just hide all the columns and show completion Page
@@ -421,6 +467,14 @@ void MainFrame::CompletionPage()
 	this->Refresh();
 }
 
+/**
+ * The function generates a random array of tube colors and replaces any non-colored tubes with the first colored tube in
+ * the same column.
+ *
+ * @param arr an integer array that represents the tubes in the game. Each element in the array represents a tube and its
+ * color. The array has a length of 28, representing 7 columns and 4 tubes in each column. The colors are represented by
+ * integers from 0 to 5, where 0
+ */
 void MainFrame::TubeGenerator(int arr[]) {
 
 	//creating variables to store count of each of 5 colors, one var(f) to Count noColor,
