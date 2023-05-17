@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="NameAndType">
-  <Class Name="MyApp" Collapsed="true">
-    <Position X="12.25" Y="0.5" Width="1.5" />
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MyApp">
+    <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
       <FileName>App.cpp</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ActionStack">
-    <Position X="0.5" Y="1.25" Width="2" />
+    <Position X="11.75" Y="0.5" Width="1.75" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
@@ -24,73 +24,50 @@
       <FileName>ActionStack.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="App" Collapsed="true">
-    <Position X="10.5" Y="0.5" Width="1.5" />
+  <Class Name="App">
+    <Position X="2" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
       <FileName>App.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Game">
-    <Position X="3.75" Y="0.5" Width="2.5" />
+    <Position X="6.75" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>xQOAACAQAQCAQCEABAAhIAAAAEiIACCBDAAAgBkwAgA=</HashCode>
       <FileName>GameControl.h</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="actions" />
-      <Field Name="colTubStack" />
-      <Field Name="redoActions" />
-      <Field Name="tubes" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="Node" Collapsed="true">
-    <Position X="20" Y="7.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAgBAACAAAAAAAAAAAAAAgAMAAAA=</HashCode>
-      <FileName>Queue.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Queue" Collapsed="true">
-    <Position X="20" Y="7.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAIAAAgDQAAAAABIAACAAEQAAAAAAAAEABAAAAQAQ=</HashCode>
-      <FileName>Queue.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="TubeSet" Collapsed="true">
-    <Position X="14" Y="1.5" Width="1.5" />
+  <Class Name="TubeSet">
+    <Position X="9.25" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAQIAAAAACAACAEAAAAAIAAAAAAAAABAAigAAYCAA=</HashCode>
       <FileName>TubeSet.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MainFrame">
-    <Position X="7.25" Y="1.25" Width="2.5" />
+    <Position X="3.75" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AEQAIAAAAQCAwIABAAAAAFABmgAAICAAQhAEAAAhAQA=</HashCode>
       <FileName>MainFrame.h</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="round1" />
-    </ShowAsAssociation>
   </Class>
-  <Class Name="Stack" Collapsed="true">
-    <Position X="12.25" Y="1.5" Width="1.5" />
+  <Class Name="Stack">
+    <Position X="9.25" Y="4.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAAAQIgBAADAAAAIgAgAAAAAIAAQAICAIAQAA=</HashCode>
       <FileName>stack.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="colIDs" Collapsed="true">
-    <Position X="12.25" Y="2.75" Width="1.5" />
+  <Enum Name="colIDs">
+    <Position X="2.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AgAAAAAACAAAAAAAQAIAAAAAAACAAAhACAAAAAAAAAA=</HashCode>
       <FileName>MainFrame.cpp</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="__unnamed_enum_037a_1" Collapsed="true">
-    <Position X="10.5" Y="2.75" Width="2" />
+  <Enum Name="__unnamed_enum_037a_1">
+    <Position X="3.75" Y="6.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAgAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>MainFrame.h</FileName>
