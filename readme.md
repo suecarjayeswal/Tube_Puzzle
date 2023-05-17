@@ -106,6 +106,7 @@ Tube_Puzzle/
 ## 📷 Screenshots <a name="screenshots"></a>
 
 Some screenshots of the Tube Puzzle Game:
+---
 <p align="center">
 
   <img src="https://github.com/suecarjayeswal/Tube_Puzzle/blob/IntialBranch/Screenshots/Screenshots/HomeScreen.png">
@@ -114,7 +115,7 @@ Some screenshots of the Tube Puzzle Game:
   <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/FlowOfExecution.png">
   <img src="https://github.com/suecarjayeswal/Tube_Puzzle//blob/IntialBranch/Screenshots/ClassesDesign.png">
 </p>
-
+---
 ## 💡 What We Learned <a name = "what-we-learned"></a>
 
 While developing the Tube Puzzle Game project, we gained valuable experience in various areas, including:
