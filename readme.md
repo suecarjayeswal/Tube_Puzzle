@@ -29,7 +29,6 @@
 - [File Structure](#file-structure)
 - [Screenshots](#screenshots)
 - [What We Learned](#what-we-learned)
-- [Contributing](../CONTRIBUTING.md)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
 
@@ -132,8 +131,18 @@ See the list of [contributors](https://github.com/yourusername/tube-puzzle-game/
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
-- Hat tip to anyone whose code or resources were used in this project.
-- Inspiration: Bottle sort games in Playstore
+We would like to extend our sincere gratitude to our project supervisor, [Dr. Prakash Poudyal](https://www.linkedin.com/in/prakash-poudyal-6623b019/), for his invaluable guidance, professional counsel, and continuous support throughout the development of this project. His expertise and insightful feedback have been instrumental in shaping our project and providing inspiration for our work. We are highly indebted to him for believing in us and pushing us to achieve our best.
+
+We would also like to express our sincere regards to the [Department of Mathematics](https://math.ku.edu.np/), Kathmandu University ([KU](https://ku.edu.np/)), School of Science ([SOS](http://sos.ku.edu.np/)) for including the project COMP 202 in our syllabus. This provided us with a platform and network to undertake this project and succeed in its completion.
+
+Furthermore, we would like to extend our gratitude to all of our classmates who have made significant contributions through their criticism, suggestions, and counsel. Their valuable input has played a crucial role in refining our project and helping us overcome challenges. This project has been a great opportunity for us to learn new concepts and problem-solving techniques, which will undoubtedly benefit us in our future endeavors.
+
+We would also like to thank our friends and family for their unwavering support and encouragement throughout this project. Their belief in our abilities has motivated us to overcome obstacles and strive for excellence.
+
+Finally, we express our appreciation to all the individuals, communities, and online resources that have provided valuable insights, tutorials, and documentation related to the technologies and tools we utilized in this project. Their contributions have been instrumental in our learning and development journey.
+
+This project has been a collective effort, and we are grateful to everyone who has contributed directly or indirectly to its success. Thank you all for being part of this remarkable journey!
+
 ## References
 
 - [GUI learning Playlist wxWidgets C++](https://www.youtube.com/watch?v=BjQhp0eHmJw&list=PLFk1_lkqT8MbVOcwEppCPfjGOGhLvcf9G) (YouTube)
