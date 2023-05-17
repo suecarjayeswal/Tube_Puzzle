@@ -106,11 +106,11 @@ Tube_Puzzle/
 ## 📷 Screenshots <a name="screenshots"></a>
 
 Some screenshots of the Tube Puzzle Game:
-![HomeScreen](Screenshots\HomeScreen.png)
-![CompletionPage](Screenshots\CompletionPage.png)
-![Others](Screenshots\Others.png)
-![FlowOfExecution](Screenshots\FlowOfExecution.png)
-![ClassesDesign](Screenshots\ClassesDesign.png)
+![Screenshot](Screenshots\HomeScreen.png)
+![Screenshot](Screenshots\CompletionPage.png)
+![Screenshot](Screenshots\Others.png)
+![Screenshot](Screenshots\FlowOfExecution.png)
+![Screenshot](Screenshots\ClassesDesign.png)
 
 ## 💡 What We Learned <a name = "what-we-learned"></a>
 
