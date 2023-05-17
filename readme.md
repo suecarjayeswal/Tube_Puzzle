@@ -106,6 +106,7 @@ Tube_Puzzle/
 ## 📷 Screenshots <a name="screenshots"></a>
 
 Some screenshots of the Tube Puzzle Game:
+![First Screen shot](Screenshots/CompletionPage.png)
 ---
 <p align="center">
 
