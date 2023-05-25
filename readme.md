@@ -8,8 +8,8 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/suecarjayeswal/tube-puzzle-game.svg)](https://suecarjayeswal/tube-puzzle-game/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/yourusername/tube-puzzle-game.svg)](https://github.com/suecarjayeswal/tube-puzzle-game/pulls)
+[![GitHub Issues](https://img.shields.io/github/issues/suecarjayeswal/tube-puzzle-game.svg)](https://github.com/suecarjayeswal/tube-puzzle-game/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/suecarjayeswal/tube-puzzle-game.svg)](https://github.com/suecarjayeswal/tube-puzzle-game/pulls)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
