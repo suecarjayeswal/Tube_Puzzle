@@ -60,10 +60,12 @@ To get a copy of the project up and running on your local machine, follow these 
 ### Installation
 
 1. Clone the repository to your local machine.
-2. Open the project in Visual Studio.
+2. Open the project in Visual Studio. (Download [Visual Studio](https://visualstudio.microsoft.com/))
+// run the sln file
 3. Build the project to compile the source code.
 4. Run the application and start playing the Tube Puzzle Game.
 
+//just wanna play the game? open .exe file
 ## 🎈 Usage <a name="usage"></a>
 
 - Launch the game application.
